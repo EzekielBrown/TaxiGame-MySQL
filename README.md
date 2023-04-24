@@ -23,5 +23,5 @@ Leaderboards may be included to allow players to compete with each other for the
 
 ## Links
 
-[Report](https://docs.google.com/document/d/16c71FU0xzIt0mtzA-5RxUiP3-ociRCcmh_HV8bkV3-I/edit#heading=h.9njgmbwomk69)
+[Report](https://docs.google.com/document/d/16c71FU0xzIt0mtzA-5RxUiP3-ociRCcmh_HV8bkV3-I/edit#heading=h.9njgmbwomk69) <br>
 [CRUD Table](https://docs.google.com/spreadsheets/d/1qTNR7YFBs_-xw39mWh1hcr72LvqSaQm2DPGfhNmR0qE/edit#gid=0)
