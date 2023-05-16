@@ -16,8 +16,6 @@ DROP TABLE IF EXISTS tile;
 DROP TABLE IF EXISTS game;
 DROP TABLE IF EXISTS inventory;
 DROP TABLE IF EXISTS item;
-DROP TABLE IF EXISTS game_user;
-DROP TABLE IF EXISTS tile_item;
 
 
 -- Create Tables
@@ -41,7 +39,8 @@ CREATE TABLE tile
 	column int(1),
 	row int(1),
 	homeTile int(1),
-	DROPOffTile int(1),
+	DropOffTile int(1),
+	itemID int(10) foreign key references item(itemID),
 );
 
 CREATE TABLE game
@@ -63,13 +62,9 @@ CREATE TABLE inventory
 (
 	inventoryID int(10) primary key not null auto_increment,
 	itemID int(10) foreign key references tile(tileID),
+	userID int(10) foreign key references user(userID),
 );
 
-CREATE TABLE tile_item
-(
-	tileID int(10) foreign key references tile(tileID),
-	itemID int(10) foreign key references item(itemID),
-);
 
 END //
 DELIMITER ;
