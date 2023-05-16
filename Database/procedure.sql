@@ -65,6 +65,12 @@ CREATE TABLE inventory
 	userID int(10) foreign key references user(userID),
 );
 
+CREATE TABLE chat
+(
+	chatID int(10) primary key not null auto_increment,
+	userID int(10) foreign key references user(userID),
+	message varchar(255) null,
+);
 
 END //
 DELIMITER ;
@@ -249,6 +255,19 @@ DELIMITER //
 
 CREATE PROCEDURE Create_Game()
 BEGIN
+	DECLARE found_userID INT(10);
+	DECLARE found_tileID INT(10);
+
+	SELECT userID INTO found_userID
+	FROM user
+	WHERE username = input_username;
+
+	SELECT tileID INTO found_tileID
+	FROM tile
+	WHERE xCoord = input_xCoord AND yCoord = input_yCoord;
+
+
+
 
 	
 END //
@@ -292,9 +311,11 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Chat_Message;
 DELIMITER //
 
-CREATE PROCEDURE Chat_Message()
+CREATE PROCEDURE Chat_Message(In input_username VARCHAR(20), In input_message VARCHAR(100))
 BEGIN
-	
+	INSERT INTO chat(username, message)
+	VALUES (input_username, input_message);
+	SELECT * FROM chat;
 END //
 DELIMITER ;
 
