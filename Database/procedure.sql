@@ -1,28 +1,28 @@
-drop database if exists taxi_game;
-create database taxi_game;
-use taxi_game;
+DROP DATABASE IF EXISTS taxi_game;
+CREATE DATABASE taxi_game;
+USE taxi_game;
 
 -- Drop Procedure
 
-drop procedure if exists create_taxi_game;
+DROP PROCEDURE IF EXISTS Create_taxi_game;
 delimiter //
 
 -- Create Procedure
-create procedure create_taxi_game()
-begin
+CREATE PROCEDURE Create_taxi_game()
+BEGIN
 
-drop table if exists user;
-drop table if exists tile;
-drop table if exists game;
-drop table if exists inventory;
-drop table if exists item;
-drop table if exists game_user;
-drop table if exists tile_item;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS tile;
+DROP TABLE IF EXISTS game;
+DROP TABLE IF EXISTS inventory;
+DROP TABLE IF EXISTS item;
+DROP TABLE IF EXISTS game_user;
+DROP TABLE IF EXISTS tile_item;
 
 
 -- Create Tables
 
-create table user
+CREATE TABLE user
 (
 	userID int(10) primary key not null AUTO_INCREMENT,
 	username varchar(20) not null unique,
@@ -35,22 +35,22 @@ create table user
 	score int(10)
 );
 
-create table tile
+CREATE TABLE tile
 (
 	tileID int(10) primary key not null auto_increment,
 	column int(1),
 	row int(1),
 	homeTile int(1),
-	dropOffTile int(1),
+	DROPOffTile int(1),
 );
 
-create table game
+CREATE TABLE game
 (
 	gameID int(10) primary key not null auto_increment,
 	tileID int(10) foreign key references tile(tileID),
 );
 
-create table item
+CREATE TABLE item
 (
 	itemID int(10) primary key not null auto_increment,
 	name varchar(30) null,
@@ -58,40 +58,40 @@ create table item
 	isNPC bit not null,
 );
 
-create table inventory
+CREATE TABLE inventory
 (
 	inventoryID int(10) primary key not null auto_increment,
 	itemID int(10) foreign key references tile(tileID),
 );
 
-create table game_user
+CREATE TABLE game_user
 (
 	gameID int(10) foreign key references game(gameID),
 	userID int(10) foreign key references user(userID),
 	inventoryID(10) foreign key references inventory(inventoryID),
 );
 
-create table tile_item
+CREATE TABLE tile_item
 (
 	tileID int(10) foreign key references tile(tileID),
 	itemID int(10) foreign key references item(itemID),
 );
 
-end //
+END //
 delimiter ;
 
-drop procedure if exists create_data()
+DROP PROCEDURE IF EXISTS CREATE_data()
 delimiter ;
 
-create procedure create_data()
-begin
+CREATE PROCEDURE CREATE_data()
+BEGIN
 	INSERT INTO user (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
 	VALUES 
 	('JohnDoe', 'password123', 'johndoe@email.com', false, 0, 0, 0, 100),
 	('JaneDoe', 'password456', 'janedoe@email.com', true, 0, 0, 1, 200),
 	('BobSmith', 'password789', 'bobsmith@email.com', false, 1, 3, 0, 50);
 
-	INSERT INTO tile (column, row, homeTile, dropOffTile )
+	INSERT INTO tile (column, row, homeTile, DropOffTile )
 	VALUES 
 	(1, 1, 0, 0),
 	(1, 2, 1, 0),
@@ -124,11 +124,11 @@ begin
 	('Passenger','Drop off ' , 0 ),
 	('Frog', 'Avoid', 1);
 	
-end // 
+END // 
 delimiter
 
-call create_taxi_game();
-call create_data();
+call CREATE_taxi_game();
+call CREATE_data();
 
 -- Login Procedure
 
@@ -181,6 +181,9 @@ DELIMITER ;
 
 
 -- New User Procedure
+
+
+
 -- Log Out Procedure
 -- Get Active Players Procedure
 -- Create Game Procedure
