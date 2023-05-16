@@ -48,6 +48,7 @@ CREATE TABLE game
 (
 	gameID int(10) primary key not null auto_increment,
 	tileID int(10) foreign key references tile(tileID),
+	userId int(10) foreign key references user(userID),
 );
 
 CREATE TABLE item
@@ -64,13 +65,6 @@ CREATE TABLE inventory
 	itemID int(10) foreign key references tile(tileID),
 );
 
-CREATE TABLE game_user
-(
-	gameID int(10) foreign key references game(gameID),
-	userID int(10) foreign key references user(userID),
-	inventoryID(10) foreign key references inventory(inventoryID),
-);
-
 CREATE TABLE tile_item
 (
 	tileID int(10) foreign key references tile(tileID),
@@ -81,8 +75,8 @@ END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS CREATE_data()
-DELIMITER ;
 
+DELIMITER //
 CREATE PROCEDURE CREATE_data()
 BEGIN
 	INSERT INTO user (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
@@ -124,8 +118,8 @@ BEGIN
 	('Passenger','Drop off ' , 0 ),
 	('Frog', 'Avoid', 1);
 	
-END // 
-DELIMITER
+END //
+DELIMITER ;
 
 call CREATE_taxi_game();
 call CREATE_data();
@@ -133,7 +127,6 @@ call CREATE_data();
 -- Login Procedure
 
 DROP PROCEDURE IF EXISTS Log_In;
-DELIMITER //
 
 DELIMITER //
 CREATE PROCEDURE Log_In(IN input_username VARCHAR(20), IN input_password VARCHAR(30))
@@ -186,8 +179,8 @@ DELIMITER ;
 -- New User Procedure
 
 DROP PROCEDURE IF EXISTS New_User;
-DELIMITER //
 
+DELIMITER //
 CREATE PROCEDURE New_User(in input_username VARCHAR(20), in input_password VARCHAR(30), in input_email varchar(50))
 BEGIN
 	declare username_exists int(1)
@@ -218,13 +211,27 @@ DELIMITER ;
 -- Log Out Procedure
 
 DROP PROCEDURE IF EXISTS Log_Out;
-DELIMITER //
 
-CREATE PROCEDURE Log_Out()
-BEGIN
-	
-END
 DELIMITER //
+CREATE PROCEDURE LogOut(IN input_username VARCHAR(20))
+BEGIN
+    DECLARE found_userID INT(10);
+
+    SELECT userID INTO found_userID 
+    FROM user 
+    WHERE username = input_username;
+
+    IF found_userID IS NOT NULL THEN
+        UPDATE user 
+        SET isOnline = 0
+        WHERE userID = found_userID;
+        SELECT 'Logout Successful' AS message;
+    ELSE 
+        SELECT 'User not found' AS message;
+    END IF;
+END //
+DELIMITER ;
+
 
 -- Get Active Players Procedure
 
@@ -233,9 +240,12 @@ DELIMITER //
 
 CREATE PROCEDURE Active_User_List()
 BEGIN
-	
-END
-DELIMITER //
+	SELECT u.userID, u.username
+	FROM user u 
+	INNER JOIN game g ON u.userID = g.userID
+	WHERE u.isOnline = 1 AND u.isLocked = 0;
+END //
+DELIMITER ;
 
 -- Create Game Procedure
 
@@ -244,9 +254,10 @@ DELIMITER //
 
 CREATE PROCEDURE Create_Game()
 BEGIN
+
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Get All Games Procedure
 
@@ -256,8 +267,8 @@ DELIMITER //
 CREATE PROCEDURE Game_List()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Join Game Procedure
 
@@ -267,8 +278,8 @@ DELIMITER //
 CREATE PROCEDURE Join_Game()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Movement Procedure
 
@@ -278,8 +289,8 @@ DELIMITER //
 CREATE PROCEDURE User_Movement()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Chat Procedure
 
@@ -289,8 +300,8 @@ DELIMITER //
 CREATE PROCEDURE Chat_Message()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Game End Procedure
 
@@ -300,8 +311,8 @@ DELIMITER //
 CREATE PROCEDURE Game_End()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Admin Edit User Procedure
 
@@ -311,8 +322,8 @@ DELIMITER //
 CREATE PROCEDURE Admin_Edit_User()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Admin Add User Procedure
 
@@ -322,8 +333,8 @@ DELIMITER //
 CREATE PROCEDURE Admin_New_User()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 -- Admin Delete User Procedure
 
@@ -333,8 +344,8 @@ DELIMITER //
 CREATE PROCEDURE Admin_Delete_User()
 BEGIN
 	
-END
-DELIMITER //
+END //
+DELIMITER ;
 
 
 
