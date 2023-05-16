@@ -235,7 +235,7 @@ CREATE PROCEDURE Active_User_List()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Create Game Procedure
 
@@ -246,7 +246,7 @@ CREATE PROCEDURE Create_Game()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Get All Games Procedure
 
@@ -257,7 +257,7 @@ CREATE PROCEDURE Game_List()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Join Game Procedure
 
@@ -268,7 +268,7 @@ CREATE PROCEDURE Join_Game()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Movement Procedure
 
@@ -279,7 +279,7 @@ CREATE PROCEDURE User_Movement()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Chat Procedure
 
@@ -290,7 +290,7 @@ CREATE PROCEDURE Chat_Message()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Game End Procedure
 
@@ -301,7 +301,7 @@ CREATE PROCEDURE Game_End()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Admin Edit User Procedure
 
@@ -312,7 +312,7 @@ CREATE PROCEDURE Admin_Edit_User()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Admin Add User Procedure
 
@@ -323,7 +323,7 @@ CREATE PROCEDURE Admin_New_User()
 BEGIN
 	
 END
-delimter //
+DELIMITER //
 
 -- Admin Delete User Procedure
 
@@ -335,7 +335,6 @@ BEGIN
 	
 END
 DELIMITER //
-
 
 
 
