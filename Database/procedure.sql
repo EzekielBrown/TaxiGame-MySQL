@@ -188,11 +188,31 @@ DELIMITER ;
 drop procedure if exists New_User;
 delimiter //
 
-create procedure New_User()
+create procedure New_User(in input_username VARCHAR(20), in input_password VARCHAR(30), in input_email varchar(50))
 begin
+	declare username_exists int(1)
+	declare email_exists int(1)
 	
-end
-delimter //
+    SELECT COUNT(*) INTO username_exists
+    FROM user
+    WHERE username = input_username;
+
+    SELECT COUNT(*) INTO email_exists
+    FROM user
+    WHERE email = input_email;
+
+   -- Checks to see if username or email exists
+    IF username_exists = 0 AND email_exists = 0 THEN
+        INSERT INTO user (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
+        VALUES (input_username, input_password, input_email, false, 0, 0, 0, 0);
+        SELECT 'User added successfully' AS message;
+    ELSEIF username_exists > 0 THEN
+        SELECT 'Username already exists' AS message;
+    ELSE 
+        SELECT 'Email already exists' AS message;
+    END IF;
+END //
+DELIMITER ;
 
 
 -- Log Out Procedure
