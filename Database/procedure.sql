@@ -5,7 +5,7 @@ USE taxi_game;
 -- Drop Procedure
 
 DROP PROCEDURE IF EXISTS Create_taxi_game;
-delimiter //
+DELIMITER //
 
 -- Create Procedure
 CREATE PROCEDURE Create_taxi_game()
@@ -78,10 +78,10 @@ CREATE TABLE tile_item
 );
 
 END //
-delimiter ;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS CREATE_data()
-delimiter ;
+DELIMITER ;
 
 CREATE PROCEDURE CREATE_data()
 BEGIN
@@ -125,15 +125,15 @@ BEGIN
 	('Frog', 'Avoid', 1);
 	
 END // 
-delimiter
+DELIMITER
 
 call CREATE_taxi_game();
 call CREATE_data();
 
 -- Login Procedure
 
-drop procedure if exists Log_In;
-delimiter //
+DROP PROCEDURE IF EXISTS Log_In;
+DELIMITER //
 
 DELIMITER //
 CREATE PROCEDURE Log_In(IN input_username VARCHAR(20), IN input_password VARCHAR(30))
@@ -185,11 +185,11 @@ DELIMITER ;
 
 -- New User Procedure
 
-drop procedure if exists New_User;
-delimiter //
+DROP PROCEDURE IF EXISTS New_User;
+DELIMITER //
 
-create procedure New_User(in input_username VARCHAR(20), in input_password VARCHAR(30), in input_email varchar(50))
-begin
+CREATE PROCEDURE New_User(in input_username VARCHAR(20), in input_password VARCHAR(30), in input_email varchar(50))
+BEGIN
 	declare username_exists int(1)
 	declare email_exists int(1)
 	
@@ -217,124 +217,124 @@ DELIMITER ;
 
 -- Log Out Procedure
 
-drop procedure if exists Log_Out;
-delimiter //
+DROP PROCEDURE IF EXISTS Log_Out;
+DELIMITER //
 
-create procedure Log_Out()
-begin
+CREATE PROCEDURE Log_Out()
+BEGIN
 	
-end
-delimter //
+END
+DELIMITER //
 
 -- Get Active Players Procedure
 
-drop procedure if exists Active_User_List;
-delimiter //
+DROP PROCEDURE IF EXISTS Active_User_List;
+DELIMITER //
 
-create procedure Active_User_List()
-begin
+CREATE PROCEDURE Active_User_List()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Create Game Procedure
 
-drop procedure if exists Create_Game;
-delimiter //
+DROP PROCEDURE IF EXISTS Create_Game;
+DELIMITER //
 
-create procedure Create_Game()
-begin
+CREATE PROCEDURE Create_Game()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Get All Games Procedure
 
-drop procedure if exists Game_List;
-delimiter //
+DROP PROCEDURE IF EXISTS Game_List;
+DELIMITER //
 
-create procedure Game_List()
-begin
+CREATE PROCEDURE Game_List()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Join Game Procedure
 
-drop procedure if exists Join_Game;
-delimiter //
+DROP PROCEDURE IF EXISTS Join_Game;
+DELIMITER //
 
-create procedure Join_Game()
-begin
+CREATE PROCEDURE Join_Game()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Movement Procedure
 
-drop procedure if exists User_Movement;
-delimiter //
+DROP PROCEDURE IF EXISTS User_Movement;
+DELIMITER //
 
-create procedure User_Movement()
-begin
+CREATE PROCEDURE User_Movement()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Chat Procedure
 
-drop procedure if exists Chat_Message;
-delimiter //
+DROP PROCEDURE IF EXISTS Chat_Message;
+DELIMITER //
 
-create procedure Chat_Message()
-begin
+CREATE PROCEDURE Chat_Message()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Game End Procedure
 
-drop procedure if exists Game_End;
-delimiter //
+DROP PROCEDURE IF EXISTS Game_End;
+DELIMITER //
 
-create procedure Game_End()
-begin
+CREATE PROCEDURE Game_End()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Admin Edit User Procedure
 
-drop procedure if exists Admin_Edit_User;
-delimiter //
+DROP PROCEDURE IF EXISTS Admin_Edit_User;
+DELIMITER //
 
-create procedure Admin_Edit_User()
-begin
+CREATE PROCEDURE Admin_Edit_User()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Admin Add User Procedure
 
-drop procedure if exists Admin_New_User;
-delimiter //
+DROP PROCEDURE IF EXISTS Admin_New_User;
+DELIMITER //
 
-create procedure Admin_New_User()
-begin
+CREATE PROCEDURE Admin_New_User()
+BEGIN
 	
-end
+END
 delimter //
 
 -- Admin Delete User Procedure
 
-drop procedure if exists Admin_Delete_User;
-delimiter //
+DROP PROCEDURE IF EXISTS Admin_Delete_User;
+DELIMITER //
 
-create procedure Admin_Delete_User()
-begin
+CREATE PROCEDURE Admin_Delete_User()
+BEGIN
 	
-end
-delimter //
+END
+DELIMITER //
 
 
 
