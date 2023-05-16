@@ -335,9 +335,16 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Admin_Edit_User;
 DELIMITER //
 
-CREATE PROCEDURE Admin_Edit_User()
+CREATE PROCEDURE Admin_Edit_User(In input_username VARCHAR(20), In input_password VARCHAR(30), In input_email varchar(50))
 BEGIN
-	
+	IF EXISTS (SELECT email FROM user WHERE email = input_email) THEN
+		UPDATE user
+		SET username = input_username, password = input_password, email = input_email
+		WHERE email = input_email;
+	ELSE
+		SELECT 'Email does not exist' AS message;
+	END IF;
+	SELECT CONCAT(username, ' updated') AS message;												
 END //
 DELIMITER ;
 
@@ -346,9 +353,17 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Admin_New_User;
 DELIMITER //
 
-CREATE PROCEDURE Admin_New_User()
+CREATE PROCEDURE Admin_New_User(In input_username VARCHAR(20), In input_password VARCHAR(30), In input_email varchar(50))
 BEGIN
-	
+	IF EXISTS (SELECT username FROM user WHERE username = input_username) THEN
+		SELECT 'Username already exists' AS message;
+	ELSEIF EXISTS (SELECT email FROM user WHERE email = input_email) THEN
+		SELECT 'Email already exists' AS message;
+	ELSE
+		INSERT INTO user (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
+		VALUES (input_username, input_password, input_email, false, 0, 0, 0, 0);
+		SELECT 'User added successfully' AS message;
+	END IF;
 END //
 DELIMITER ;
 
@@ -357,9 +372,21 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Admin_Delete_User;
 DELIMITER //
 
-CREATE PROCEDURE Admin_Delete_User()
+CREATE PROCEDURE Admin_Delete_User(In input_username VARCHAR(20), IN adminID INT(10))
 BEGIN
-	
+	Declare isAdmin BOOLEAN,
+
+	SELECT isAdmin INTO isAdmin
+	FROM user
+	WHERE userID = adminID;
+
+	IF isAdmin = 1 THEN
+		DELETE FROM user
+		WHERE username = input_username;
+		SELECT CONCAT(input_username, ' deleted') AS message;
+	ELSE
+		SELECT 'User is not an admin' AS message;
+	END IF;
 END //
 DELIMITER ;
 
