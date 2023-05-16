@@ -132,8 +132,11 @@ call CREATE_data();
 
 -- Login Procedure
 
+drop procedure if exists Log_In;
+delimiter //
+
 DELIMITER //
-CREATE PROCEDURE Login(IN input_username VARCHAR(20), IN input_password VARCHAR(30))
+CREATE PROCEDURE Log_In(IN input_username VARCHAR(20), IN input_password VARCHAR(30))
 BEGIN
     DECLARE found_password VARCHAR(30);
     DECLARE found_userID INT(10);
@@ -182,20 +185,138 @@ DELIMITER ;
 
 -- New User Procedure
 
+drop procedure if exists New_User;
+delimiter //
+
+create procedure New_User()
+begin
+	
+end
+delimter //
 
 
 -- Log Out Procedure
+
+drop procedure if exists Log_Out;
+delimiter //
+
+create procedure Log_Out()
+begin
+	
+end
+delimter //
+
 -- Get Active Players Procedure
+
+drop procedure if exists Active_User_List;
+delimiter //
+
+create procedure Active_User_List()
+begin
+	
+end
+delimter //
+
 -- Create Game Procedure
+
+drop procedure if exists Create_Game;
+delimiter //
+
+create procedure Create_Game()
+begin
+	
+end
+delimter //
+
 -- Get All Games Procedure
+
+drop procedure if exists Game_List;
+delimiter //
+
+create procedure Game_List()
+begin
+	
+end
+delimter //
+
 -- Join Game Procedure
+
+drop procedure if exists Join_Game;
+delimiter //
+
+create procedure Join_Game()
+begin
+	
+end
+delimter //
+
 -- Movement Procedure
+
+drop procedure if exists User_Movement;
+delimiter //
+
+create procedure User_Movement()
+begin
+	
+end
+delimter //
+
 -- Chat Procedure
+
+drop procedure if exists Chat_Message;
+delimiter //
+
+create procedure Chat_Message()
+begin
+	
+end
+delimter //
+
 -- Game End Procedure
+
+drop procedure if exists Game_End;
+delimiter //
+
+create procedure Game_End()
+begin
+	
+end
+delimter //
+
 -- Admin Edit User Procedure
+
+drop procedure if exists Admin_Edit_User;
+delimiter //
+
+create procedure Admin_Edit_User()
+begin
+	
+end
+delimter //
+
 -- Admin Add User Procedure
+
+drop procedure if exists Admin_New_User;
+delimiter //
+
+create procedure Admin_New_User()
+begin
+	
+end
+delimter //
+
 -- Admin Delete User Procedure
--- Lock User Procedure
+
+drop procedure if exists Admin_Delete_User;
+delimiter //
+
+create procedure Admin_Delete_User()
+begin
+	
+end
+delimter //
+
+
 
 
 
