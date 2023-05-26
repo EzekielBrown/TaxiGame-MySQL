@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\zekbr\\workspace\\TaxiGame\\TaxiGame.csproj": {}
+    "C:\\Users\\zekbr\\workspace\\EzekielBrown\\TaxiGame-MySQL\\TaxiGame\\TaxiGame.csproj": {}
   },
   "projects": {
-    "C:\\Users\\zekbr\\workspace\\TaxiGame\\TaxiGame.csproj": {
+    "C:\\Users\\zekbr\\workspace\\EzekielBrown\\TaxiGame-MySQL\\TaxiGame\\TaxiGame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\zekbr\\workspace\\TaxiGame\\TaxiGame.csproj",
+        "projectUniqueName": "C:\\Users\\zekbr\\workspace\\EzekielBrown\\TaxiGame-MySQL\\TaxiGame\\TaxiGame.csproj",
         "projectName": "TaxiGame",
-        "projectPath": "C:\\Users\\zekbr\\workspace\\TaxiGame\\TaxiGame.csproj",
+        "projectPath": "C:\\Users\\zekbr\\workspace\\EzekielBrown\\TaxiGame-MySQL\\TaxiGame\\TaxiGame.csproj",
         "packagesPath": "C:\\Users\\zekbr\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\zekbr\\workspace\\TaxiGame\\obj\\",
+        "outputPath": "C:\\Users\\zekbr\\workspace\\EzekielBrown\\TaxiGame-MySQL\\TaxiGame\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\zekbr\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -39,6 +39,16 @@
       "frameworks": {
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
+          "dependencies": {
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[8.0.33, )"
+            },
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -58,7 +68,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.103\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }

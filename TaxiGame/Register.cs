@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace TaxiGame
 {
-    public partial class formRegister : Form
+    public partial class Register : Form
     {
-        public formRegister()
+        public Register()
         {
             InitializeComponent();
         }

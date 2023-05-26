@@ -1,6 +1,6 @@
 ﻿namespace TaxiGame
 {
-    partial class formRegister
+    partial class Register
     {
         /// <summary>
         /// Required designer variable.
@@ -28,100 +28,99 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formRegister));
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.buttonCreate = new System.Windows.Forms.Button();
-            this.textUsername = new System.Windows.Forms.TextBox();
-            this.textPassword = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Register));
+            pictureBox1 = new PictureBox();
+            buttonCreate = new Button();
+            textUsername = new TextBox();
+            textPassword = new TextBox();
+            button1 = new Button();
+            textBox1 = new TextBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SuspendLayout();
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(-1, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(700, 500);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 6;
-            this.pictureBox1.TabStop = false;
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(-1, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(700, 500);
+            pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox1.TabIndex = 6;
+            pictureBox1.TabStop = false;
             // 
             // buttonCreate
             // 
-            this.buttonCreate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(31)))), ((int)(((byte)(36)))));
-            this.buttonCreate.FlatAppearance.BorderSize = 0;
-            this.buttonCreate.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.buttonCreate.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
-            this.buttonCreate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonCreate.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.buttonCreate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(215)))), ((int)(((byte)(166)))));
-            this.buttonCreate.Location = new System.Drawing.Point(465, 383);
-            this.buttonCreate.Name = "buttonCreate";
-            this.buttonCreate.Size = new System.Drawing.Size(171, 46);
-            this.buttonCreate.TabIndex = 8;
-            this.buttonCreate.Text = "CREATE";
-            this.buttonCreate.UseVisualStyleBackColor = false;
+            buttonCreate.BackColor = Color.FromArgb(35, 31, 36);
+            buttonCreate.FlatAppearance.BorderSize = 0;
+            buttonCreate.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonCreate.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonCreate.FlatStyle = FlatStyle.Flat;
+            buttonCreate.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonCreate.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonCreate.Location = new Point(465, 383);
+            buttonCreate.Name = "buttonCreate";
+            buttonCreate.Size = new Size(171, 46);
+            buttonCreate.TabIndex = 8;
+            buttonCreate.Text = "CREATE";
+            buttonCreate.UseVisualStyleBackColor = false;
             // 
             // textUsername
             // 
-            this.textUsername.Location = new System.Drawing.Point(465, 210);
-            this.textUsername.Name = "textUsername";
-            this.textUsername.PlaceholderText = "USERNAME";
-            this.textUsername.Size = new System.Drawing.Size(171, 23);
-            this.textUsername.TabIndex = 9;
+            textUsername.Location = new Point(465, 210);
+            textUsername.Name = "textUsername";
+            textUsername.PlaceholderText = "USERNAME";
+            textUsername.Size = new Size(171, 23);
+            textUsername.TabIndex = 9;
             // 
             // textPassword
             // 
-            this.textPassword.Location = new System.Drawing.Point(465, 268);
-            this.textPassword.Name = "textPassword";
-            this.textPassword.PasswordChar = '*';
-            this.textPassword.PlaceholderText = "PASSWORD";
-            this.textPassword.Size = new System.Drawing.Size(171, 23);
-            this.textPassword.TabIndex = 10;
+            textPassword.Location = new Point(465, 268);
+            textPassword.Name = "textPassword";
+            textPassword.PasswordChar = '*';
+            textPassword.PlaceholderText = "PASSWORD";
+            textPassword.Size = new Size(171, 23);
+            textPassword.TabIndex = 10;
             // 
             // button1
             // 
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(31)))), ((int)(((byte)(36)))));
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(215)))), ((int)(((byte)(166)))));
-            this.button1.Location = new System.Drawing.Point(465, 435);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(171, 46);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "BACK";
-            this.button1.UseVisualStyleBackColor = false;
+            button1.BackColor = Color.FromArgb(35, 31, 36);
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            button1.FlatAppearance.MouseOverBackColor = Color.Black;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            button1.ForeColor = Color.FromArgb(245, 215, 166);
+            button1.Location = new Point(465, 435);
+            button1.Name = "button1";
+            button1.Size = new Size(171, 46);
+            button1.TabIndex = 11;
+            button1.Text = "BACK";
+            button1.UseVisualStyleBackColor = false;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(465, 239);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.PlaceholderText = "EMAIL";
-            this.textBox1.Size = new System.Drawing.Size(171, 23);
-            this.textBox1.TabIndex = 12;
+            textBox1.Location = new Point(465, 239);
+            textBox1.Name = "textBox1";
+            textBox1.PlaceholderText = "EMAIL";
+            textBox1.Size = new Size(171, 23);
+            textBox1.TabIndex = 12;
             // 
-            // formRegister
+            // Register
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 495);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textPassword);
-            this.Controls.Add(this.textUsername);
-            this.Controls.Add(this.buttonCreate);
-            this.Controls.Add(this.pictureBox1);
-            this.Name = "formRegister";
-            this.Text = "Taxi - The Game";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(694, 495);
+            Controls.Add(textBox1);
+            Controls.Add(button1);
+            Controls.Add(textPassword);
+            Controls.Add(textUsername);
+            Controls.Add(buttonCreate);
+            Controls.Add(pictureBox1);
+            Name = "Register";
+            Text = "Taxi - The Game";
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
