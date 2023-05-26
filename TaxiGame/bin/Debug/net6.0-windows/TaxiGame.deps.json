@@ -8,7 +8,8 @@
     ".NETCoreApp,Version=v6.0": {
       "TaxiGame/1.0.0": {
         "dependencies": {
-          "MySql.Data": "8.0.33"
+          "MySql.Data": "8.0.33",
+          "MySqlConnector": "2.2.6"
         },
         "runtime": {
           "TaxiGame.dll": {}
@@ -103,6 +104,14 @@
             "rid": "win-x64",
             "assetType": "native",
             "fileVersion": "4.1.0.0"
+          }
+        }
+      },
+      "MySqlConnector/2.2.6": {
+        "runtime": {
+          "lib/net6.0/MySqlConnector.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.2.6.0"
           }
         }
       },
@@ -306,6 +315,13 @@
       "sha512": "sha512-mW+A9tc0s+3E3+XYe80aJmr/AvZoKBZG44w13AdVf4+1iRDwgdL6eLMPZgHyQFGwdLwNvQNPKegcOE4rRDuv8Q==",
       "path": "mysql.data/8.0.33",
       "hashPath": "mysql.data.8.0.33.nupkg.sha512"
+    },
+    "MySqlConnector/2.2.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-oYHl9TNhJXBEqfuiaEsOdBPkdULOcCCbqZJzYhy0rtREnMVoluG73GM8+gwBCMb1vbjv9K1ehQnhe0cxdxfOCA==",
+      "path": "mysqlconnector/2.2.6",
+      "hashPath": "mysqlconnector.2.2.6.nupkg.sha512"
     },
     "Portable.BouncyCastle/1.9.0": {
       "type": "package",

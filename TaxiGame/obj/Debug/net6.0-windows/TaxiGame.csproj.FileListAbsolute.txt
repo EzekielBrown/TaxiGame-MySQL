@@ -58,3 +58,4 @@ C:\Users\zekbr\workspace\EzekielBrown\TaxiGame-MySQL\TaxiGame\bin\Debug\net6.0-w
 C:\Users\zekbr\workspace\EzekielBrown\TaxiGame-MySQL\TaxiGame\obj\Debug\net6.0-windows\TaxiGame.csproj.CopyComplete
 C:\Users\zekbr\workspace\EzekielBrown\TaxiGame-MySQL\TaxiGame\obj\Debug\net6.0-windows\TaxiGame.genruntimeconfig.cache
 C:\Users\zekbr\workspace\EzekielBrown\TaxiGame-MySQL\TaxiGame\obj\Debug\net6.0-windows\ref\TaxiGame.dll
+C:\Users\zekbr\workspace\EzekielBrown\TaxiGame-MySQL\TaxiGame\bin\Debug\net6.0-windows\MySqlConnector.dll

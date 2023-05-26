@@ -33,7 +33,7 @@
             buttonCreate = new Button();
             textUsername = new TextBox();
             textPassword = new TextBox();
-            button1 = new Button();
+            buttonBack = new Button();
             textBox1 = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -63,6 +63,7 @@
             buttonCreate.TabIndex = 8;
             buttonCreate.Text = "CREATE";
             buttonCreate.UseVisualStyleBackColor = false;
+            buttonCreate.Click += buttonCreate_Click;
             // 
             // textUsername
             // 
@@ -81,21 +82,21 @@
             textPassword.Size = new Size(171, 23);
             textPassword.TabIndex = 10;
             // 
-            // button1
+            // buttonBack
             // 
-            button1.BackColor = Color.FromArgb(35, 31, 36);
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
-            button1.FlatAppearance.MouseOverBackColor = Color.Black;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
-            button1.ForeColor = Color.FromArgb(245, 215, 166);
-            button1.Location = new Point(465, 435);
-            button1.Name = "button1";
-            button1.Size = new Size(171, 46);
-            button1.TabIndex = 11;
-            button1.Text = "BACK";
-            button1.UseVisualStyleBackColor = false;
+            buttonBack.BackColor = Color.FromArgb(35, 31, 36);
+            buttonBack.FlatAppearance.BorderSize = 0;
+            buttonBack.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonBack.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonBack.FlatStyle = FlatStyle.Flat;
+            buttonBack.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonBack.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonBack.Location = new Point(465, 435);
+            buttonBack.Name = "buttonBack";
+            buttonBack.Size = new Size(171, 46);
+            buttonBack.TabIndex = 11;
+            buttonBack.Text = "BACK";
+            buttonBack.UseVisualStyleBackColor = false;
             // 
             // textBox1
             // 
@@ -111,7 +112,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(694, 495);
             Controls.Add(textBox1);
-            Controls.Add(button1);
+            Controls.Add(buttonBack);
             Controls.Add(textPassword);
             Controls.Add(textUsername);
             Controls.Add(buttonCreate);
@@ -129,7 +130,7 @@
         private Button buttonCreate;
         private TextBox textUsername;
         private TextBox textPassword;
-        private Button button1;
+        private Button buttonBack;
         private TextBox textBox1;
     }
 }
