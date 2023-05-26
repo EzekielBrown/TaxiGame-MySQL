@@ -80,8 +80,8 @@ CREATE TABLE tblChat
 -- Foreign Keys
 
 alter table tblTile
-add constraint fk_user_tile
-FOREIGN KEY (userID) REFERENCES tblUser(userID);
+add constraint fk_item_tile
+FOREIGN KEY (itemID) REFERENCES tblItem(itemID);
 
 alter table tblGame
 add constraint fk_user_game
@@ -290,7 +290,7 @@ DELIMITER //
 
 CREATE PROCEDURE Game_List()
 BEGIN
-	
+	SELECT * FROM tblGame;
 END //
 DELIMITER ;
 
@@ -384,7 +384,7 @@ DELIMITER //
 
 CREATE PROCEDURE Admin_Delete_User(In pUsername VARCHAR(20), IN adminID INT(10))
 BEGIN
-	Declare isAdmin BOOLEAN,
+	DECLARE isAdmin BOOLEAN;
 
 	SELECT isAdmin INTO isAdmin
 	FROM tblUser
@@ -399,6 +399,7 @@ BEGIN
 	END IF;
 END //
 DELIMITER ;
+
 
 -- Delete User Procedure
 
@@ -423,7 +424,7 @@ DELIMITER //
 
 CREATE PROCEDURE Admin_End_Game(In pGameID INT(10), In adminID INT(10))
 BEGIN
-	Declare isAdmin BOOLEAN,
+	Declare isAdmin BOOLEAN;
 
 	SELECT isAdmin INTO isAdmin
 	FROM tblUser
