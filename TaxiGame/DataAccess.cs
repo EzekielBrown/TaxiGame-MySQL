@@ -57,7 +57,7 @@ namespace TaxiGame
             aPassword.Value = pPassword;
             logInParams.Add(aPassword);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL LogIn(@Username, @Password)", logInParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Log_In(@Username, @Password)", logInParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -69,7 +69,7 @@ namespace TaxiGame
             aUsername.Value = pUsername;
             logOutParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL LogOut(@Username)", logOutParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Log_Out(@Username)", logOutParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -82,7 +82,7 @@ namespace TaxiGame
             aUsername.Value = pUsername;
             deleteUserParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "Call deleteUser(@Username)", deleteUserParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "Call delete_User(@Username)", deleteUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<String>("Message");
         }
@@ -90,7 +90,7 @@ namespace TaxiGame
         {
             List<MySqlParameter> activePlayersParams = new List<MySqlParameter>();
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "Call getActivePlayers()", activePlayersParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "Call Active_User_List()", activePlayersParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<String>("Message");
         }
@@ -98,7 +98,7 @@ namespace TaxiGame
         {
             List<MySqlParameter> createGameParams = new List<MySqlParameter>();
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL createGame()", createGameParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Create_Game()", createGameParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -106,7 +106,7 @@ namespace TaxiGame
         {
             List<MySqlParameter> gameListParams = new List<MySqlParameter>();
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL getGameList()", gameListParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Game_List()", gameListParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -118,7 +118,7 @@ namespace TaxiGame
             aUsername.Value = pUsername;
             joinGameParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL joinGame(@Username)", joinGameParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Join_Game(@Username)", joinGameParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -134,7 +134,7 @@ namespace TaxiGame
             aTileID.Value = pTileID;
             userMovementParams.Add(aTileID);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL userMovement(@Username, @TileID)", userMovementParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL User_Movement(@Username, @TileID)", userMovementParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -150,11 +150,11 @@ namespace TaxiGame
             aMessage.Value = pMessage;
             chatMessageParams.Add(aMessage);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL chatMessage(@Username, @Message)", chatMessageParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Chat_Message(@Username, @Message)", chatMessageParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
-        public string Admin_Edit_user(string pUsername, string pPassword, string pEmail) 
+        public string Admin_Edit_User(string pUsername, string pPassword, string pEmail) 
         {
             List<MySqlParameter> adminEditUserParams = new List<MySqlParameter>();
 
@@ -170,7 +170,7 @@ namespace TaxiGame
             aEmail.Value = pEmail;
             adminEditUserParams.Add(aEmail);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL adminEditUser(@Username, @Password, @Email)", adminEditUserParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_Edit_User(@Username, @Password, @Email)", adminEditUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -191,7 +191,7 @@ namespace TaxiGame
             aEmail.Value = pEmail;
             adminNewUserParams.Add(aEmail);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL adminNewUser(@Username, @Password, @Email)", adminNewUserParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_New_User(@Username, @Password, @Email)", adminNewUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
@@ -203,7 +203,7 @@ namespace TaxiGame
             aUsername.Value = pUsername;
             adminDeleteUserParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL adminDeleteUser(@Username)", adminDeleteUserParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_Delete_User(@Username)", adminDeleteUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
