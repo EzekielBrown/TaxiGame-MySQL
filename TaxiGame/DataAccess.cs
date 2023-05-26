@@ -15,29 +15,35 @@ namespace TaxiGame
 
         public string New_User(string pUsername, String pPassword, String pEmail) 
         {
-            List<MySqlParameter> p = new List<MySqlParameter>();
-            var aP = new MySqlParameter("@Username", MySqlDbType.VarChar, 45);
-            aP.Value = pUsername;
-            p.Add(aP);
+            List<MySqlParameter> newUserParams = new List<MySqlParameter>();
 
-            var bP = new MySqlParameter("@Password", MySqlDbType.VarChar, 45);
-            bP.Value = pPassword;
-            p.Add(bP);
+            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 45);
+            aUsername.Value = pUsername;
+            newUserParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL registerUser(@Username, @Password)", p.ToArray());
+            MySqlParameter aPassword = new MySqlParameter("@Password", MySqlDbType.VarChar, 45);
+            aPassword.Value = pPassword;
+            newUserParams.Add(aPassword);
 
-            // expecting one table with one row
-            return (aDataSet.Tables[0].Rows[0])["MESSAGE"].ToString();
+            MySqlParameter aEmail = new MySqlParameter("@Email", MySqlDbType.VarChar, 100);
+            aEmail.Value = pEmail;
+            newUserParams.Add(aEmail);
+
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL New_User(@Username, @Password, @Email)", newUserParams.ToArray());
+
+            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
 
         public class PlayerInDB
         {
             private string _username;
             private string _password;
+            private string _email;
 
 
             public string Username { get => _username; set => _username = value; }
             public string Password { get => _password; set => _password = value; }
+            public string Email { get => _email; set => _email = value; }
         }
         public string Log_In(string pUsername, string pPassword) 
         {

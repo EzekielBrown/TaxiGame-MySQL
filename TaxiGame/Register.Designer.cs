@@ -34,7 +34,7 @@
             textUsername = new TextBox();
             textPassword = new TextBox();
             buttonBack = new Button();
-            textBox1 = new TextBox();
+            textEmail = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -97,21 +97,22 @@
             buttonBack.TabIndex = 11;
             buttonBack.Text = "BACK";
             buttonBack.UseVisualStyleBackColor = false;
+            buttonBack.Click += buttonBack_Click;
             // 
-            // textBox1
+            // textEmail
             // 
-            textBox1.Location = new Point(465, 239);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "EMAIL";
-            textBox1.Size = new Size(171, 23);
-            textBox1.TabIndex = 12;
+            textEmail.Location = new Point(465, 239);
+            textEmail.Name = "textEmail";
+            textEmail.PlaceholderText = "EMAIL";
+            textEmail.Size = new Size(171, 23);
+            textEmail.TabIndex = 12;
             // 
             // Register
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(694, 495);
-            Controls.Add(textBox1);
+            Controls.Add(textEmail);
             Controls.Add(buttonBack);
             Controls.Add(textPassword);
             Controls.Add(textUsername);
@@ -131,6 +132,6 @@
         private TextBox textUsername;
         private TextBox textPassword;
         private Button buttonBack;
-        private TextBox textBox1;
+        private TextBox textEmail;
     }
 }
