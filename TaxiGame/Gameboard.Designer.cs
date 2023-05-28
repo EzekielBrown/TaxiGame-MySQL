@@ -29,36 +29,36 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Gameboard));
-            this.buttonHome = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            buttonHome = new Button();
+            SuspendLayout();
             // 
             // buttonHome
             // 
-            this.buttonHome.BackColor = System.Drawing.Color.Transparent;
-            this.buttonHome.FlatAppearance.BorderSize = 0;
-            this.buttonHome.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.buttonHome.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
-            this.buttonHome.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonHome.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.buttonHome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(215)))), ((int)(((byte)(166)))));
-            this.buttonHome.Location = new System.Drawing.Point(578, 71);
-            this.buttonHome.Name = "buttonHome";
-            this.buttonHome.Size = new System.Drawing.Size(171, 46);
-            this.buttonHome.TabIndex = 13;
-            this.buttonHome.Text = "HOME";
-            this.buttonHome.UseVisualStyleBackColor = false;
+            buttonHome.BackColor = Color.Transparent;
+            buttonHome.FlatAppearance.BorderSize = 0;
+            buttonHome.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonHome.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonHome.FlatStyle = FlatStyle.Flat;
+            buttonHome.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonHome.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonHome.Location = new Point(578, 71);
+            buttonHome.Name = "buttonHome";
+            buttonHome.Size = new Size(171, 46);
+            buttonHome.TabIndex = 13;
+            buttonHome.Text = "HOME";
+            buttonHome.UseVisualStyleBackColor = false;
+            buttonHome.Click += buttonHome_Click;
             // 
             // Gameboard
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(984, 647);
-            this.Controls.Add(this.buttonHome);
-            this.Name = "Gameboard";
-            this.Text = "Gameboard";
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
+            ClientSize = new Size(984, 647);
+            Controls.Add(buttonHome);
+            Name = "Gameboard";
+            Text = "Gameboard";
+            ResumeLayout(false);
         }
 
         #endregion

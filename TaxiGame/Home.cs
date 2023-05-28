@@ -26,6 +26,7 @@ namespace TaxiGame
 
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
+            this.Hide();
 
         }
 
