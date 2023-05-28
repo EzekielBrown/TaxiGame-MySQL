@@ -21,12 +21,15 @@ namespace TaxiGame
 
             MessageBox.Show(result);
 
-            if (result == "Login successful") // Assuming this is the success message returned from Log_In method
+            if (result == "Login successful") 
             {
-                // Perform the necessary actions after successful login
+                Home homeForm = new Home();
+                homeForm.Show();
 
-                // Close the login form
                 this.Close();
+            } else
+            {
+                MessageBox.Show("Login Failed");
             }
         }
 
