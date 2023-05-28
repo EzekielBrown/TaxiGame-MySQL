@@ -6,6 +6,7 @@ namespace TaxiGame
         private Register _register;
         private DataAccess dataAccess;
         private Home _home;
+        private bool isAdmin;
         public Login()
         {
             InitializeComponent();
@@ -19,10 +20,12 @@ namespace TaxiGame
             string username = textUsername.Text;
             string password = textPassword.Text;
 
-            string result = dataAccess.Log_In(username, password);
+            string result = dataAccess.Log_In(username, password, out isAdmin);
 
             if (result == "Login Successful") 
             {
+                _home.SetAdminStatus(isAdmin);
+
                 this.Hide();
                 _home.Show();
             } 

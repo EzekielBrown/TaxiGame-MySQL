@@ -55,7 +55,7 @@ namespace TaxiGame
             public int Score { get => _score; set => _score = value; }
         }
 
-        public string Log_In(string pUsername, string pPassword)
+        public string Log_In(string pUsername, string pPassword, out bool isAdmin)
         {
             List<MySqlParameter> logInParams = new List<MySqlParameter>();
 
@@ -72,15 +72,16 @@ namespace TaxiGame
                 connection.Open();
 
                 var aDataSet = MySqlHelper.ExecuteDataset(connection, @"
-            SELECT userID, password, numLoginAttempts, isLocked
-            FROM tblUser 
-            WHERE username = @pUsername", logInParams.ToArray());
+        SELECT userID, password, numLoginAttempts, isLocked, isAdmin
+        FROM tblUser 
+        WHERE username = @pUsername", logInParams.ToArray());
 
                 if (aDataSet.Tables[0].Rows.Count > 0)
                 {
                     string passwordFromDb = aDataSet.Tables[0].Rows[0].Field<string>("password");
                     int numLoginAttempts = aDataSet.Tables[0].Rows[0].Field<int>("numLoginAttempts");
                     ulong isLocked = aDataSet.Tables[0].Rows[0].Field<ulong>("isLocked");
+                    isAdmin = aDataSet.Tables[0].Rows[0].Field<bool>("isAdmin");
 
                     if (passwordFromDb == pPassword && isLocked == 0)
                     {
@@ -110,6 +111,7 @@ namespace TaxiGame
                 }
                 else
                 {
+                    isAdmin = false;
                     return "Login Failed";
                 }
             }
@@ -135,7 +137,6 @@ namespace TaxiGame
 
         private void UpdateLoginAttempts(MySqlConnection connection, int userID, int numLoginAttempts)
         {
-            // Update numLoginAttempts in tblUser
             MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET numLoginAttempts = @NumLoginAttempts WHERE userID = @UserID", mySqlConnection);
             cmd.Parameters.AddWithValue("@NumLoginAttempts", numLoginAttempts);
             cmd.Parameters.AddWithValue("@UserID", userID);
@@ -144,7 +145,6 @@ namespace TaxiGame
 
         private void LockAccount(MySqlConnection connection, int userID)
         {
-            // Lock account in tblUser
             MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET isLocked = 1 WHERE userID = @UserID", mySqlConnection);
             cmd.Parameters.AddWithValue("@UserID", userID);
             cmd.ExecuteNonQuery();

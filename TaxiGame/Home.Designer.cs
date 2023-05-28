@@ -29,86 +29,88 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.buttonNewGame = new System.Windows.Forms.Button();
-            this.buttonLogOut = new System.Windows.Forms.Button();
-            this.buttonAdmin = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
+            pictureBox1 = new PictureBox();
+            buttonNewGame = new Button();
+            buttonLogOut = new Button();
+            buttonAdmin = new Button();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SuspendLayout();
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(-1, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(700, 500);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 6;
-            this.pictureBox1.TabStop = false;
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(-1, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(700, 500);
+            pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox1.TabIndex = 6;
+            pictureBox1.TabStop = false;
             // 
             // buttonNewGame
             // 
-            this.buttonNewGame.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(31)))), ((int)(((byte)(36)))));
-            this.buttonNewGame.FlatAppearance.BorderSize = 0;
-            this.buttonNewGame.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.buttonNewGame.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
-            this.buttonNewGame.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonNewGame.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.buttonNewGame.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(215)))), ((int)(((byte)(166)))));
-            this.buttonNewGame.Location = new System.Drawing.Point(465, 200);
-            this.buttonNewGame.Name = "buttonNewGame";
-            this.buttonNewGame.Size = new System.Drawing.Size(171, 46);
-            this.buttonNewGame.TabIndex = 9;
-            this.buttonNewGame.Text = "NEW GAME";
-            this.buttonNewGame.UseVisualStyleBackColor = false;
+            buttonNewGame.BackColor = Color.FromArgb(35, 31, 36);
+            buttonNewGame.FlatAppearance.BorderSize = 0;
+            buttonNewGame.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonNewGame.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonNewGame.FlatStyle = FlatStyle.Flat;
+            buttonNewGame.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonNewGame.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonNewGame.Location = new Point(465, 200);
+            buttonNewGame.Name = "buttonNewGame";
+            buttonNewGame.Size = new Size(171, 46);
+            buttonNewGame.TabIndex = 9;
+            buttonNewGame.Text = "NEW GAME";
+            buttonNewGame.UseVisualStyleBackColor = false;
+            buttonNewGame.Click += buttonNewGame_Click;
             // 
             // buttonLogOut
             // 
-            this.buttonLogOut.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(31)))), ((int)(((byte)(36)))));
-            this.buttonLogOut.FlatAppearance.BorderSize = 0;
-            this.buttonLogOut.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.buttonLogOut.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
-            this.buttonLogOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonLogOut.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.buttonLogOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(215)))), ((int)(((byte)(166)))));
-            this.buttonLogOut.Location = new System.Drawing.Point(465, 437);
-            this.buttonLogOut.Name = "buttonLogOut";
-            this.buttonLogOut.Size = new System.Drawing.Size(171, 46);
-            this.buttonLogOut.TabIndex = 10;
-            this.buttonLogOut.Text = "LOG OUT";
-            this.buttonLogOut.UseVisualStyleBackColor = false;
+            buttonLogOut.BackColor = Color.FromArgb(35, 31, 36);
+            buttonLogOut.FlatAppearance.BorderSize = 0;
+            buttonLogOut.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonLogOut.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonLogOut.FlatStyle = FlatStyle.Flat;
+            buttonLogOut.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonLogOut.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonLogOut.Location = new Point(465, 437);
+            buttonLogOut.Name = "buttonLogOut";
+            buttonLogOut.Size = new Size(171, 46);
+            buttonLogOut.TabIndex = 10;
+            buttonLogOut.Text = "LOG OUT";
+            buttonLogOut.UseVisualStyleBackColor = false;
+            buttonLogOut.Click += buttonLogOut_Click;
             // 
             // buttonAdmin
             // 
-            this.buttonAdmin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(31)))), ((int)(((byte)(36)))));
-            this.buttonAdmin.FlatAppearance.BorderSize = 0;
-            this.buttonAdmin.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.buttonAdmin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
-            this.buttonAdmin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonAdmin.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.buttonAdmin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(215)))), ((int)(((byte)(166)))));
-            this.buttonAdmin.Location = new System.Drawing.Point(465, 252);
-            this.buttonAdmin.Name = "buttonAdmin";
-            this.buttonAdmin.Size = new System.Drawing.Size(171, 46);
-            this.buttonAdmin.TabIndex = 11;
-            this.buttonAdmin.Text = "ADMIN";
-            this.buttonAdmin.UseVisualStyleBackColor = false;
+            buttonAdmin.BackColor = Color.FromArgb(35, 31, 36);
+            buttonAdmin.FlatAppearance.BorderSize = 0;
+            buttonAdmin.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonAdmin.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonAdmin.FlatStyle = FlatStyle.Flat;
+            buttonAdmin.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonAdmin.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonAdmin.Location = new Point(465, 252);
+            buttonAdmin.Name = "buttonAdmin";
+            buttonAdmin.Size = new Size(171, 46);
+            buttonAdmin.TabIndex = 11;
+            buttonAdmin.Text = "ADMIN";
+            buttonAdmin.UseVisualStyleBackColor = false;
+            buttonAdmin.Click += buttonAdmin_Click;
             // 
             // Home
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 495);
-            this.Controls.Add(this.buttonAdmin);
-            this.Controls.Add(this.buttonLogOut);
-            this.Controls.Add(this.buttonNewGame);
-            this.Controls.Add(this.pictureBox1);
-            this.Name = "Home";
-            this.Text = "Home";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(694, 495);
+            Controls.Add(buttonAdmin);
+            Controls.Add(buttonLogOut);
+            Controls.Add(buttonNewGame);
+            Controls.Add(pictureBox1);
+            Name = "Home";
+            Text = "Home";
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
