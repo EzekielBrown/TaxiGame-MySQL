@@ -16,17 +16,23 @@ namespace TaxiGame
         private DataAccess dataAccess;
         private bool isAdmin;
         private Admin _admin;
+        private Gameboard _gameboard;
+        
 
         public Home()
         {
             InitializeComponent();
             dataAccess = new DataAccess();
             _admin = new Admin();
+            
         }
 
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
+            _gameboard = new Gameboard();
+            _gameboard.Show();
             this.Hide();
+            
 
         }
 
