@@ -24,7 +24,7 @@ CREATE TABLE tblUser
 (
 	userID int(10) primary key not null AUTO_INCREMENT,
 	username varchar(20) not null unique,
-	password varchar(30) not null,
+	`password` varchar(30) not null,
 	email varchar(50) not null unique,
 	isAdmin boolean default false,
 	isLocked bit,
@@ -111,7 +111,7 @@ DROP PROCEDURE IF EXISTS Create_Data()
 DELIMITER //
 CREATE PROCEDURE Create_Data()
 BEGIN
-	INSERT INTO tblUser (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
+	INSERT INTO tblUser (username, `password`, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
 	VALUES 
 	('JohnDoe', 'password123', 'johndoe@email.com', false, 0, 0, 0, 100),
 	('JaneDoe', 'password456', 'janedoe@email.com', true, 0, 0, 1, 200),
@@ -163,7 +163,6 @@ DROP PROCEDURE IF EXISTS Log_In;
 DELIMITER //
 CREATE PROCEDURE Log_In(IN pUsername VARCHAR(20), IN pPassword VARCHAR(30))
 BEGIN
-    DECLARE pPassword VARCHAR(30);
     DECLARE pUserID INT(10);
     DECLARE login_attempts INT(1);
     DECLARE locked BIT;
@@ -172,8 +171,8 @@ BEGIN
     FROM tblUser 
     WHERE username = pUsername;
 
-   -- Lock user out if login attempt exceeds 5
-    IF pPassword = pPassword AND locked = 0 THEN
+    -- Lock user out if login attempt exceeds 5
+    IF pPassword = password AND locked = 0 THEN
         UPDATE tblUser 
         SET isOnline = 1, numLoginAttempts = 0
         WHERE userID = pUserID;
@@ -200,28 +199,28 @@ END //
 DELIMITER ;
 
 
+
 -- New User Procedure
 
 DROP PROCEDURE IF EXISTS New_User;
 
 DELIMITER //
-CREATE PROCEDURE New_User(in pUsername VARCHAR(20), in pPassword VARCHAR(30), in pEmail varchar(50))
+
+CREATE PROCEDURE New_User(in pUsername VARCHAR(20), in pPassword VARCHAR(30), in pEmail VARCHAR(50))
 BEGIN
-  If Exists (Select * 
-     From tblUser
-     Where username = pUsername) 
-     Then
+  If Exists (Select * From tblUser Where username = pUsername) Then
 		Begin
 			Select 'User Exists' As Message;
 		End;
 	Else
-		Insert Into tblUser(username, password ,email)
-        Values
-			(pUsername,pPassword,pEmail);
-            Select 'Login Success' As Message;
+		Insert Into tblUser(username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
+        Values (pUsername, pPassword, pEmail, false, 0, 0, 0, 0);
+        Select 'Account Created' As Message;
 	End If;      
 End //
+
 DELIMITER ;
+
 
 
 -- Log Out Procedure
@@ -229,7 +228,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Log_Out;
 
 DELIMITER //
-CREATE PROCEDURE LogOut(IN pUsername VARCHAR(20))
+CREATE PROCEDURE Log_Out(IN pUsername VARCHAR(20))
 BEGIN
 	If Exists(Select *
 		From tblAccount

@@ -5,11 +5,13 @@ namespace TaxiGame
         private Login _login;
         private Register _register;
         private DataAccess dataAccess;
+        private Home _home;
         public Login()
         {
             InitializeComponent();
             _register = new Register();
             dataAccess = new DataAccess();
+            _home = new Home();
         }
 
         private void buttonLogin_Click(object sender, EventArgs e)
@@ -19,15 +21,12 @@ namespace TaxiGame
 
             string result = dataAccess.Log_In(username, password);
 
-            MessageBox.Show(result);
-
-            if (result == "Login successful") 
+            if (result == "Login Successful") 
             {
-                Home homeForm = new Home();
-                homeForm.Show();
-
-                this.Close();
-            } else
+                this.Hide();
+                _home.Show();
+            } 
+            else
             {
                 MessageBox.Show("Login Failed");
             }

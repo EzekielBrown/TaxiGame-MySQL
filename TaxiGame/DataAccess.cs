@@ -39,28 +39,118 @@ namespace TaxiGame
             private string _username;
             private string _password;
             private string _email;
-
+            private bool _isAdmin;
+            private bool _isLocked;
+            private int _numLoginAttempts;
+            private bool _isOnline;
+            private int _score;
 
             public string Username { get => _username; set => _username = value; }
             public string Password { get => _password; set => _password = value; }
             public string Email { get => _email; set => _email = value; }
+            public bool IsAdmin { get => _isAdmin; set => _isAdmin = value; }
+            public bool IsLocked { get => _isLocked; set => _isLocked = value; }
+            public int NumLoginAttempts { get => _numLoginAttempts; set => _numLoginAttempts = value; }
+            public bool IsOnline { get => _isOnline; set => _isOnline = value; }
+            public int Score { get => _score; set => _score = value; }
         }
-        public string Log_In(string pUsername, string pPassword) 
+
+        public string Log_In(string pUsername, string pPassword)
         {
             List<MySqlParameter> logInParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
+            MySqlParameter aUsername = new MySqlParameter("@pUsername", MySqlDbType.VarChar, 20);
             aUsername.Value = pUsername;
             logInParams.Add(aUsername);
 
-            MySqlParameter aPassword = new MySqlParameter("@Password", MySqlDbType.VarChar, 50);
+            MySqlParameter aPassword = new MySqlParameter("@pPassword", MySqlDbType.VarChar, 30);
             aPassword.Value = pPassword;
             logInParams.Add(aPassword);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Log_In(@Username, @Password)", logInParams.ToArray());
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
 
-            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+                var aDataSet = MySqlHelper.ExecuteDataset(connection, @"
+            SELECT userID, password, numLoginAttempts, isLocked
+            FROM tblUser 
+            WHERE username = @pUsername", logInParams.ToArray());
+
+                if (aDataSet.Tables[0].Rows.Count > 0)
+                {
+                    string passwordFromDb = aDataSet.Tables[0].Rows[0].Field<string>("password");
+                    int numLoginAttempts = aDataSet.Tables[0].Rows[0].Field<int>("numLoginAttempts");
+                    ulong isLocked = aDataSet.Tables[0].Rows[0].Field<ulong>("isLocked");
+
+                    if (passwordFromDb == pPassword && isLocked == 0)
+                    {
+                        UpdateUserStatus(connection, aDataSet.Tables[0].Rows[0].Field<int>("userID"));
+
+                        return "Login Successful";
+                    }
+                    else if (isLocked == 1)
+                    {
+                        return "Account Locked";
+                    }
+                    else
+                    {
+                        UpdateLoginAttempts(connection, aDataSet.Tables[0].Rows[0].Field<int>("userID"), numLoginAttempts + 1);
+
+                        if (numLoginAttempts + 1 >= 5)
+                        {
+                            LockAccount(connection, aDataSet.Tables[0].Rows[0].Field<int>("userID"));
+
+                            return "Account Locked";
+                        }
+                        else
+                        {
+                            return "Login Failed";
+                        }
+                    }
+                }
+                else
+                {
+                    return "Login Failed";
+                }
+            }
         }
+
+
+
+        private void UpdateUserStatus(MySqlConnection connection, int userID)
+        {
+            if (connection.State != ConnectionState.Open)
+                connection.Open();
+
+            string query = "UPDATE tblUser SET isOnline = 1, numLoginAttempts = 0 WHERE userID = @UserID";
+
+            using (MySqlCommand cmd = new MySqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@UserID", userID);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+
+        private void UpdateLoginAttempts(MySqlConnection connection, int userID, int numLoginAttempts)
+        {
+            // Update numLoginAttempts in tblUser
+            MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET numLoginAttempts = @NumLoginAttempts WHERE userID = @UserID", mySqlConnection);
+            cmd.Parameters.AddWithValue("@NumLoginAttempts", numLoginAttempts);
+            cmd.Parameters.AddWithValue("@UserID", userID);
+            cmd.ExecuteNonQuery();
+        }
+
+        private void LockAccount(MySqlConnection connection, int userID)
+        {
+            // Lock account in tblUser
+            MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET isLocked = 1 WHERE userID = @UserID", mySqlConnection);
+            cmd.Parameters.AddWithValue("@UserID", userID);
+            cmd.ExecuteNonQuery();
+        }
+
+
         public string Log_Out(string pUsername) 
         {
             List<MySqlParameter> logOutParams = new List<MySqlParameter>();
@@ -203,7 +293,7 @@ namespace TaxiGame
             aUsername.Value = pUsername;
             adminDeleteUserParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_Delete_User(@Username)", adminDeleteUserParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL (@Username)", adminDeleteUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
