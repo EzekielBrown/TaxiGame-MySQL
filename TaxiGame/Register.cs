@@ -30,11 +30,11 @@ namespace TaxiGame
 
             if (result == "User Exists")
             {
-                MessageBox.Show("Username already exists. Please choose a different username.");
+                MessageBox.Show("Username already exists.");            
             }
             else if (result == "Email Exists")
             {
-                MessageBox.Show("Email already exists. Please use a different email address.");
+                MessageBox.Show("Email already exists.");
             }
             else
             {
@@ -45,7 +45,6 @@ namespace TaxiGame
                 _login.ShowDialog();
             }
         }
-
 
         private void buttonBack_Click(object sender, EventArgs e)
         {

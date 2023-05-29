@@ -15,15 +15,18 @@ namespace TaxiGame
 
         public string New_User(string pUsername, string pPassword, string pEmail)
         {
+            bool usernameExists = CheckUsernameExists(pUsername);
+            if (usernameExists)
+            {
+                MessageBox.Show("Username already exists. Please choose a different username.");
+                return "User Exists";
+            }
 
             bool emailExists = CheckEmailExists(pEmail);
             if (emailExists)
             {
                 MessageBox.Show("Email is already taken. Please choose a different email.");
-
-                Register registerForm = new Register();
-                registerForm.Show();
-                return "Email Taken";
+                return "Email Exists";
             }
 
             List<MySqlParameter> newUserParams = new List<MySqlParameter>();
@@ -44,6 +47,21 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
+        private bool CheckUsernameExists(string pUsername)
+        {
+            List<MySqlParameter> checkUsernameParams = new List<MySqlParameter>();
+
+            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 45);
+            aUsername.Value = pUsername;
+            checkUsernameParams.Add(aUsername);
+
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "SELECT COUNT(*) FROM tblUser WHERE username = @Username", checkUsernameParams.ToArray());
+            int count = Convert.ToInt32(aDataSet.Tables[0].Rows[0][0]);
+
+            return count > 0;
+        }
+
 
         private bool CheckEmailExists(string pEmail)
         {
@@ -176,7 +194,7 @@ namespace TaxiGame
         }
 
 
-        public string Log_Out(string pUsername) 
+        public string Log_Out(string pUsername)
         {
             List<MySqlParameter> logOutParams = new List<MySqlParameter>();
 
@@ -188,6 +206,7 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
 
         public string Delete_User(string pUsername)
         {

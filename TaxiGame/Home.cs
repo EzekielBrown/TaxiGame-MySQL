@@ -53,10 +53,26 @@ namespace TaxiGame
 
         private void buttonLogOut_Click(object sender, EventArgs e)
         {
-            this.Close();
+            string currentUsername = "z";
 
-            Login loginForm = new Login();
-            loginForm.Show();
+            string result = dataAccess.Log_Out(currentUsername);
+
+            if (result == "Logout Successful")
+            {
+                MessageBox.Show("Logout Successful");
+
+                Login loginForm = new Login();
+                loginForm.Show();
+
+                this.Close();
+            }
+            else
+            {           
+                Login loginForm = new Login();
+                loginForm.Show();
+
+                this.Close();
+            }
         }
 
         public void SetAdminStatus(bool isAdmin)
