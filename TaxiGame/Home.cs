@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using static TaxiGame.DataAccess;
 
 namespace TaxiGame
 {
@@ -17,24 +18,26 @@ namespace TaxiGame
         private bool isAdmin;
         private Admin _admin;
         private Gameboard _gameboard;
-        
+
 
         public Home()
         {
             InitializeComponent();
             dataAccess = new DataAccess();
             _admin = new Admin();
-            
+
+            OnlinePlayers();
+
         }
 
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
+
             _gameboard = new Gameboard();
             _gameboard.Show();
             this.Hide();
-            
-
         }
+
 
         private void buttonAdmin_Click(object sender, EventArgs e)
         {
@@ -59,7 +62,19 @@ namespace TaxiGame
         public void SetAdminStatus(bool isAdmin)
         {
             this.isAdmin = isAdmin;
-            buttonAdmin.Visible = isAdmin;  // Show the admin button if isAdmin is true
+            buttonAdmin.Visible = isAdmin;
+        }
+
+        private void OnlinePlayers()
+        {
+            listBoxPlayers.Items.Clear();
+
+            List<PlayerInDB> activePlayers = dataAccess.Active_User_List();
+
+            foreach (PlayerInDB player in activePlayers)
+            {
+                listBoxPlayers.Items.Add(player.Username);
+            }
         }
 
 

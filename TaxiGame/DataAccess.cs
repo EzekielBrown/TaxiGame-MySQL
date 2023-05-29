@@ -13,8 +13,19 @@ namespace TaxiGame
         private static String connectionString = "Server=localhost;Port=3306;Database=taxi_game;Uid=root;password=root;";
         private MySqlConnection mySqlConnection = new MySqlConnection(connectionString);
 
-        public string New_User(string pUsername, String pPassword, String pEmail) 
+        public string New_User(string pUsername, string pPassword, string pEmail)
         {
+
+            bool emailExists = CheckEmailExists(pEmail);
+            if (emailExists)
+            {
+                MessageBox.Show("Email is already taken. Please choose a different email.");
+
+                Register registerForm = new Register();
+                registerForm.Show();
+                return "Email Taken";
+            }
+
             List<MySqlParameter> newUserParams = new List<MySqlParameter>();
 
             MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 45);
@@ -32,6 +43,20 @@ namespace TaxiGame
             var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL New_User(@Username, @Password, @Email)", newUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+        }
+
+        private bool CheckEmailExists(string pEmail)
+        {
+            List<MySqlParameter> checkEmailParams = new List<MySqlParameter>();
+
+            MySqlParameter aEmail = new MySqlParameter("@Email", MySqlDbType.VarChar, 100);
+            aEmail.Value = pEmail;
+            checkEmailParams.Add(aEmail);
+
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "SELECT COUNT(*) FROM tblUser WHERE email = @Email", checkEmailParams.ToArray());
+            int count = Convert.ToInt32(aDataSet.Tables[0].Rows[0][0]);
+
+            return count > 0;
         }
 
         public class PlayerInDB
@@ -176,22 +201,33 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<String>("Message");
         }
-        public string Active_User_List() 
+        public List<PlayerInDB> Active_User_List()
         {
+            List<PlayerInDB> activePlayers = new List<PlayerInDB>();
+
             List<MySqlParameter> activePlayersParams = new List<MySqlParameter>();
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "Call Active_User_List()", activePlayersParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Active_User_List()", activePlayersParams.ToArray());
 
-            return aDataSet.Tables[0].Rows[0].Field<String>("Message");
+            foreach (DataRow row in aDataSet.Tables[0].Rows)
+            {
+                PlayerInDB player = new PlayerInDB();
+                player.Username = row["username"].ToString();
+
+                activePlayers.Add(player);
+            }
+
+            return activePlayers;
         }
-        public string Create_Game() 
+        public string Create_Game(string pUsername)
         {
             List<MySqlParameter> createGameParams = new List<MySqlParameter>();
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Create_Game()", createGameParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Create_Game(@pUsername)", createGameParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
         public string Game_List() 
         {
             List<MySqlParameter> gameListParams = new List<MySqlParameter>();

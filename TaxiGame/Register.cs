@@ -28,15 +28,7 @@ namespace TaxiGame
 
             string result = dataAccess.New_User(username, password, email);
 
-            if (result == "Account Created")
-            {
-                MessageBox.Show("Account created successfully!");
-                this.Hide();
-
-                _login = new Login();
-                _login.ShowDialog();
-            }
-            else if (result == "User Exists")
+            if (result == "User Exists")
             {
                 MessageBox.Show("Username already exists. Please choose a different username.");
             }
@@ -46,10 +38,12 @@ namespace TaxiGame
             }
             else
             {
-                MessageBox.Show("Error creating account. Please try again.");
-            }
+                MessageBox.Show("Account created successfully!");
+                this.Hide();
 
-            this.Close();
+                _login = new Login();
+                _login.ShowDialog();
+            }
         }
 
 

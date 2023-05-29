@@ -33,6 +33,7 @@
             buttonNewGame = new Button();
             buttonLogOut = new Button();
             buttonAdmin = new Button();
+            listBoxPlayers = new ListBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -97,11 +98,21 @@
             buttonAdmin.UseVisualStyleBackColor = false;
             buttonAdmin.Click += buttonAdmin_Click;
             // 
+            // listBoxPlayers
+            // 
+            listBoxPlayers.FormattingEnabled = true;
+            listBoxPlayers.ItemHeight = 15;
+            listBoxPlayers.Location = new Point(27, 43);
+            listBoxPlayers.Name = "listBoxPlayers";
+            listBoxPlayers.Size = new Size(120, 94);
+            listBoxPlayers.TabIndex = 12;
+            // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(694, 495);
+            Controls.Add(listBoxPlayers);
             Controls.Add(buttonAdmin);
             Controls.Add(buttonLogOut);
             Controls.Add(buttonNewGame);
@@ -119,5 +130,6 @@
         private Button buttonNewGame;
         private Button buttonLogOut;
         private Button buttonAdmin;
+        private ListBox listBoxPlayers;
     }
 }
