@@ -20,18 +20,18 @@ DROP TABLE IF EXISTS tblItem;
 
 -- Create Tables
 
-CREATE TABLE tblUser
-(
-	userID int(10) primary key not null AUTO_INCREMENT,
-	username varchar(20) not null unique,
-	`password` varchar(30) not null,
-	email varchar(50) not null unique,
-	isAdmin boolean default false,
-	isLocked bit,
-	numLoginAttempts int(1),
-	isOnline bit,
-	score int(10)
+CREATE TABLE tblUser (
+    userID int(10) primary key not null AUTO_INCREMENT,
+    username varchar(20) not null unique,
+    `password` varchar(30) not null,
+    email varchar(50) not null unique,
+    isAdmin boolean default false,
+    isLocked bit default 0,
+    numLoginAttempts int(1) default 0,
+    isOnline bit default 0,
+    score int(10) default 0
 );
+
 
 CREATE TABLE tblItem
 (
@@ -111,11 +111,13 @@ DROP PROCEDURE IF EXISTS Create_Data()
 DELIMITER //
 CREATE PROCEDURE Create_Data()
 BEGIN
-	INSERT INTO tblUser (username, `password`, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
-	VALUES 
-	('JohnDoe', 'password123', 'johndoe@email.com', false, 0, 0, 0, 100),
-	('JaneDoe', 'password456', 'janedoe@email.com', true, 0, 0, 1, 200),
-	('BobSmith', 'password789', 'bobsmith@email.com', false, 1, 3, 0, 50);
+	INSERT INTO tblUser (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
+	values
+	('z', '', 'z', true, 0, 0, 0, 200),
+	('admin', 'admin', 'admin@admin.com', true, 0, 0, 0, 100),
+	('Online', 'online', 'online@online.com', false, 0, 0, 1, 200),
+	('locked', 'locked', 'locked@locked.com', false, 1, 3, 0, 50),
+	('delete', 'delete', 'delete@delete.com', false, 0, 0, 0, 50);
 
 	INSERT INTO tblTile (`column`, `row`, homeTile, DropOffTile )
 	VALUES 
@@ -163,6 +165,7 @@ DROP PROCEDURE IF EXISTS Log_In;
 DELIMITER //
 CREATE PROCEDURE Log_In(IN pUsername VARCHAR(20), IN pPassword VARCHAR(30))
 BEGIN
+    DECLARE pPassword VARCHAR(30);
     DECLARE pUserID INT(10);
     DECLARE login_attempts INT(1);
     DECLARE locked BIT;
@@ -171,8 +174,8 @@ BEGIN
     FROM tblUser 
     WHERE username = pUsername;
 
-    -- Lock user out if login attempt exceeds 5
-    IF pPassword = password AND locked = 0 THEN
+   -- Lock user out if login attempt exceeds 5
+    IF pPassword = pPassword AND locked = 0 THEN
         UPDATE tblUser 
         SET isOnline = 1, numLoginAttempts = 0
         WHERE userID = pUserID;
@@ -199,28 +202,28 @@ END //
 DELIMITER ;
 
 
-
 -- New User Procedure
 
 DROP PROCEDURE IF EXISTS New_User;
 
 DELIMITER //
-
-CREATE PROCEDURE New_User(in pUsername VARCHAR(20), in pPassword VARCHAR(30), in pEmail VARCHAR(50))
+CREATE PROCEDURE New_User(in pUsername VARCHAR(20), in pPassword VARCHAR(30), in pEmail varchar(50))
 BEGIN
-  If Exists (Select * From tblUser Where username = pUsername) Then
+  If Exists (Select * 
+     From tblUser
+     Where username = pUsername) 
+     Then
 		Begin
 			Select 'User Exists' As Message;
 		End;
 	Else
-		Insert Into tblUser(username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
-        Values (pUsername, pPassword, pEmail, false, 0, 0, 0, 0);
-        Select 'Account Created' As Message;
+		Insert Into tblUser(username, password ,email)
+        Values
+			(pUsername,pPassword,pEmail);
+            Select 'Login Success' As Message;
 	End If;      
 End //
-
 DELIMITER ;
-
 
 
 -- Log Out Procedure
@@ -230,16 +233,19 @@ DROP PROCEDURE IF EXISTS Log_Out;
 DELIMITER //
 CREATE PROCEDURE Log_Out(IN pUsername VARCHAR(20))
 BEGIN
-	If Exists(Select *
-		From tblAccount
-		Where username = pUsername)
-		Then
-			Update tblAccount
-                Set `online` = False
-            	Where username = pUsername;
-                Select Concat(pUsername, ' Logged Out') As Message;
-	End If;
-End //
+    IF EXISTS (
+        SELECT *
+        FROM tblUser
+        WHERE username = pUsername
+    ) THEN
+        UPDATE tblUser
+        SET isOnline = 0
+        WHERE username = pUsername;
+    END IF;
+    
+    SELECT 'Logout successful' AS Message;
+end //
+
 DELIMITER ;
 
 
@@ -250,11 +256,11 @@ DELIMITER //
 
 CREATE PROCEDURE Active_User_List()
 BEGIN
-	SELECT u.userID, u.username
-	FROM tblUser u 
-	INNER JOIN game g ON u.userID = g.userID
-	WHERE u.isOnline = 1 AND u.isLocked = 0;
+    SELECT userID, username
+    FROM tblUser
+    WHERE isOnline = 1 AND isLocked = 0;
 END //
+
 DELIMITER ;
 
 -- Create Game Procedure
@@ -262,7 +268,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Create_Game;
 DELIMITER //
 
-CREATE PROCEDURE Create_Game()
+CREATE PROCEDURE Create_Game(IN pUsername VARCHAR(45), IN pXCoord INT(10), IN pYCoord INT(10))
 BEGIN
 	DECLARE pUserID INT(10);
 	DECLARE pTileID INT(10);
@@ -272,12 +278,8 @@ BEGIN
 	WHERE username = pUsername;
 
 	SELECT tileID INTO pTileID
-	FROM tile
+	FROM tblTile
 	WHERE xCoord = pXCoord AND yCoord = pYCoord;
-
-
-
-
 	
 END //
 DELIMITER ;
@@ -344,17 +346,19 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Admin_Edit_User;
 DELIMITER //
 
-CREATE PROCEDURE Admin_Edit_User(In pUsername VARCHAR(20), In pPassword VARCHAR(30), In pEmail varchar(50))
+CREATE PROCEDURE Admin_Edit_User(IN pUsername VARCHAR(20), IN pPassword VARCHAR(30), IN pEmail VARCHAR(50), IN pIsLocked BIT, IN pIsAdmin BIT)
 BEGIN
-	IF EXISTS (SELECT email FROM tblUser WHERE email = pEmail) THEN
-		UPDATE tblUser
-		SET username = pUsername, password = pPassword, email = pEmail
-		WHERE email = pEmail;
-	ELSE
-		SELECT 'Email does not exist' AS message;
-	END IF;
-	SELECT CONCAT(username, ' updated') AS message;												
-END //
+    IF EXISTS (SELECT email FROM tblUser WHERE email = pEmail) THEN
+        UPDATE tblUser
+        SET username = pUsername, password = pPassword, email = pEmail, isLocked = pIsLocked, isAdmin = pIsAdmin
+        WHERE email = pEmail;
+        SELECT 'User Updated' AS Message;
+    ELSE
+        SELECT 'Email does not exist' AS Message;
+    END IF;
+end //
+
+
 DELIMITER ;
 
 -- Admin Add User Procedure
@@ -437,4 +441,17 @@ BEGIN
 		SELECT 'User is not an admin' AS message;
 	END IF;
 END //
+DELIMITER ;
 
+-- Admin Get User Data
+
+drop procedure if exists Get_User_Data;
+DELIMITER //
+
+CREATE PROCEDURE Get_User_Data(IN pUserID INT)
+BEGIN
+    SELECT username, password, email
+    FROM tblUser
+    WHERE userID = pUserID;
+end //
+DELIMITER ;

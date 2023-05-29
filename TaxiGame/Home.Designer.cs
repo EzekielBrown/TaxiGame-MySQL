@@ -34,7 +34,11 @@
             buttonLogOut = new Button();
             buttonAdmin = new Button();
             listBoxPlayers = new ListBox();
+            buttonPlayers = new Button();
+            buttonGames = new Button();
+            dataGridView1 = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -102,16 +106,60 @@
             // 
             listBoxPlayers.FormattingEnabled = true;
             listBoxPlayers.ItemHeight = 15;
-            listBoxPlayers.Location = new Point(27, 43);
+            listBoxPlayers.Location = new Point(12, 64);
             listBoxPlayers.Name = "listBoxPlayers";
-            listBoxPlayers.Size = new Size(120, 94);
+            listBoxPlayers.Size = new Size(171, 94);
             listBoxPlayers.TabIndex = 12;
+            // 
+            // buttonPlayers
+            // 
+            buttonPlayers.BackColor = Color.FromArgb(35, 31, 36);
+            buttonPlayers.FlatAppearance.BorderSize = 0;
+            buttonPlayers.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonPlayers.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonPlayers.FlatStyle = FlatStyle.Flat;
+            buttonPlayers.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonPlayers.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonPlayers.Location = new Point(12, 12);
+            buttonPlayers.Name = "buttonPlayers";
+            buttonPlayers.Size = new Size(171, 46);
+            buttonPlayers.TabIndex = 13;
+            buttonPlayers.Text = "PLAYERS ONLINE";
+            buttonPlayers.UseVisualStyleBackColor = false;
+            // 
+            // buttonGames
+            // 
+            buttonGames.BackColor = Color.FromArgb(35, 31, 36);
+            buttonGames.FlatAppearance.BorderSize = 0;
+            buttonGames.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonGames.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonGames.FlatStyle = FlatStyle.Flat;
+            buttonGames.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonGames.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonGames.Location = new Point(12, 224);
+            buttonGames.Name = "buttonGames";
+            buttonGames.Size = new Size(171, 46);
+            buttonGames.TabIndex = 14;
+            buttonGames.Text = "GAMES";
+            buttonGames.UseVisualStyleBackColor = false;
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(12, 276);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowTemplate.Height = 25;
+            dataGridView1.Size = new Size(171, 150);
+            dataGridView1.TabIndex = 15;
             // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(694, 495);
+            Controls.Add(dataGridView1);
+            Controls.Add(buttonGames);
+            Controls.Add(buttonPlayers);
             Controls.Add(listBoxPlayers);
             Controls.Add(buttonAdmin);
             Controls.Add(buttonLogOut);
@@ -120,6 +168,7 @@
             Name = "Home";
             Text = "Home";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -131,5 +180,8 @@
         private Button buttonLogOut;
         private Button buttonAdmin;
         private ListBox listBoxPlayers;
+        private Button buttonPlayers;
+        private Button buttonGames;
+        private DataGridView dataGridView1;
     }
 }

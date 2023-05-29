@@ -114,10 +114,10 @@ namespace TaxiGame
             {
                 connection.Open();
 
-                var aDataSet = MySqlHelper.ExecuteDataset(connection, @"
-        SELECT userID, password, numLoginAttempts, isLocked, isAdmin
-        FROM tblUser 
-        WHERE username = @pUsername", logInParams.ToArray());
+                var aDataSet = MySqlHelper.ExecuteDataset(connection, @"    
+                    SELECT userID, password, numLoginAttempts, isLocked, isAdmin
+                    FROM tblUser 
+                    WHERE username = @pUsername", logInParams.ToArray());
 
                 if (aDataSet.Tables[0].Rows.Count > 0)
                 {
@@ -247,6 +247,53 @@ namespace TaxiGame
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
 
+        public class Tile
+        {
+            public Tile(int column, int row, bool isHomeTile, bool isDropOffTile)
+            {
+                Column = column;
+                Row = row;
+                IsHomeTile = isHomeTile;
+                IsDropOffTile = isDropOffTile;
+            }
+
+            public int Column { get; set; }
+            public int Row { get; set; }
+            public bool IsHomeTile { get; set; }
+            public bool IsDropOffTile { get; set; }
+        }
+
+
+        public List<Tile> GetTiles()
+        {
+            List<Tile> tiles = new List<Tile>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                var query = "SELECT `column`, `row`, homeTile, DropOffTile FROM tblTile";
+                var command = new MySqlCommand(query, connection);
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int column = Convert.ToInt32(reader["column"]);
+                    int row = Convert.ToInt32(reader["row"]);
+                    bool isHomeTile = Convert.ToBoolean(reader["homeTile"]);
+                    bool isDropOffTile = Convert.ToBoolean(reader["DropOffTile"]);
+
+                    Tile tile = new Tile(column, row, isHomeTile, isDropOffTile);
+                    tiles.Add(tile);
+                }
+
+                reader.Close();
+            }
+
+            return tiles;
+        }
+
+
         public string Game_List() 
         {
             List<MySqlParameter> gameListParams = new List<MySqlParameter>();
@@ -299,26 +346,37 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
-        public string Admin_Edit_User(string pUsername, string pPassword, string pEmail) 
+        public string Admin_Edit_User(string pUsername, string pPassword, string pEmail, bool pIsLocked, bool pIsAdmin)
         {
             List<MySqlParameter> adminEditUserParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
+            MySqlParameter aUsername = new MySqlParameter("@pUsername", MySqlDbType.VarChar, 20);
             aUsername.Value = pUsername;
             adminEditUserParams.Add(aUsername);
 
-            MySqlParameter aPassword = new MySqlParameter("@Password", MySqlDbType.VarChar, 45);
+            MySqlParameter aPassword = new MySqlParameter("@pPassword", MySqlDbType.VarChar, 30);
             aPassword.Value = pPassword;
             adminEditUserParams.Add(aPassword);
 
-            MySqlParameter aEmail = new MySqlParameter("@Email", MySqlDbType.VarChar, 100);
+            MySqlParameter aEmail = new MySqlParameter("@pEmail", MySqlDbType.VarChar, 50);
             aEmail.Value = pEmail;
             adminEditUserParams.Add(aEmail);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_Edit_User(@Username, @Password, @Email)", adminEditUserParams.ToArray());
+            MySqlParameter aIsLocked = new MySqlParameter("@pIsLocked", MySqlDbType.Bit);
+            aIsLocked.Value = pIsLocked;
+            adminEditUserParams.Add(aIsLocked);
+
+            MySqlParameter aIsAdmin = new MySqlParameter("@pIsAdmin", MySqlDbType.Bit);
+            aIsAdmin.Value = pIsAdmin;
+            adminEditUserParams.Add(aIsAdmin);
+
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_Edit_User(@pUsername, @pPassword, @pEmail, @pIsLocked, @pIsAdmin)", adminEditUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
+
+
 
         public string Admin_New_User(string pUsername, string pPassword, string pEmail) 
         {
@@ -340,22 +398,46 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
-        public string Admin_Delete_User(string pUsername) 
+        public string Admin_Delete_User(int userID)
         {
             List<MySqlParameter> adminDeleteUserParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
-            aUsername.Value = pUsername;
-            adminDeleteUserParams.Add(aUsername);
+            MySqlParameter aUserID = new MySqlParameter("@pUserID", MySqlDbType.Int32);
+            aUserID.Value = userID;
+            adminDeleteUserParams.Add(aUserID);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL (@Username)", adminDeleteUserParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_Delete_User(@pUserID)", adminDeleteUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
 
 
+        public PlayerInDB GetUserData(int userID)
+        {
+            List<MySqlParameter> getUserParams = new List<MySqlParameter>();
 
-        
+            MySqlParameter aUserID = new MySqlParameter("@UserID", MySqlDbType.Int32);
+            aUserID.Value = userID;
+            getUserParams.Add(aUserID);
+
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Get_User_Data(@UserID)", getUserParams.ToArray());
+
+            if (aDataSet.Tables[0].Rows.Count > 0)
+            {
+                PlayerInDB user = new PlayerInDB();
+                user.Username = aDataSet.Tables[0].Rows[0].Field<string>("Username");
+                user.Password = aDataSet.Tables[0].Rows[0].Field<string>("Password");
+                user.Email = aDataSet.Tables[0].Rows[0].Field<string>("Email");
+                // Set other user properties
+
+                return user;
+            }
+
+            return null;
+        }
+
+
+
     }
 
     

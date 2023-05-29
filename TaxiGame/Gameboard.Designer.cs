@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Gameboard));
             buttonHome = new Button();
+            panelGame = new Panel();
             SuspendLayout();
             // 
             // buttonHome
@@ -49,12 +50,20 @@
             buttonHome.UseVisualStyleBackColor = false;
             buttonHome.Click += buttonHome_Click;
             // 
+            // panelGame
+            // 
+            panelGame.Location = new Point(155, 186);
+            panelGame.Name = "panelGame";
+            panelGame.Size = new Size(680, 418);
+            panelGame.TabIndex = 14;
+            // 
             // Gameboard
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(984, 647);
+            Controls.Add(panelGame);
             Controls.Add(buttonHome);
             Name = "Gameboard";
             Text = "Gameboard";
@@ -63,5 +72,6 @@
 
         #endregion
         private Button buttonHome;
+        private Panel panelGame;
     }
 }

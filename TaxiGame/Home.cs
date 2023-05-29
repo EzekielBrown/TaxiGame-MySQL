@@ -43,6 +43,7 @@ namespace TaxiGame
         {
             if (isAdmin)
             {
+                this.Hide();
                 _admin.Show();
             }
             else
@@ -67,7 +68,7 @@ namespace TaxiGame
                 this.Close();
             }
             else
-            {           
+            {
                 Login loginForm = new Login();
                 loginForm.Show();
 
