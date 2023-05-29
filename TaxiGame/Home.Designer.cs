@@ -167,6 +167,7 @@
             buttonJoin.TabIndex = 16;
             buttonJoin.Text = "JOIN GAME";
             buttonJoin.UseVisualStyleBackColor = false;
+            buttonJoin.Click += buttonJoin_Click;
             // 
             // Home
             // 

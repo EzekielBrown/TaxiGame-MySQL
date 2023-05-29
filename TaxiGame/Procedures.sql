@@ -268,20 +268,21 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Create_Game;
 DELIMITER //
 
-CREATE PROCEDURE Create_Game(IN pUsername VARCHAR(45), IN pXCoord INT(10), IN pYCoord INT(10))
+CREATE PROCEDURE Create_Game(IN pUsername VARCHAR(20))
 BEGIN
-	DECLARE pUserID INT(10);
-	DECLARE pTileID INT(10);
+    DECLARE pUserID INT;
 
-	SELECT userID INTO pUserID
-	FROM tblUser
-	WHERE username = pUsername;
+    SELECT userID INTO pUserID
+    FROM tblUser
+    WHERE username = pUsername;
 
-	SELECT tileID INTO pTileID
-	FROM tblTile
-	WHERE xCoord = pXCoord AND yCoord = pYCoord;
-	
-END //
+    INSERT INTO tblGame (tileID, userID)
+    VALUES (DEFAULT, pUserID);
+
+    SELECT 'Game Created' AS Message;
+end //
+
+
 DELIMITER ;
 
 -- Get All Games Procedure
@@ -300,9 +301,25 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Join_Game;
 DELIMITER //
 
-CREATE PROCEDURE Join_Game()
+CREATE PROCEDURE Join_Game(IN pGameID INT, IN pUserID INT)
 BEGIN
-	
+    DECLARE gameExists INT;
+    
+    -- Check if the game exists
+    SELECT COUNT(*) INTO gameExists
+    FROM tblGame
+    WHERE gameID = pGameID;
+    
+    IF gameExists > 0 THEN
+        -- Update the user's gameID
+        UPDATE tblUser
+        SET gameID = pGameID
+        WHERE userID = pUserID;
+        
+        SELECT 'Game Joined' AS Message;
+    ELSE
+        SELECT 'Game does not exist' AS Message;
+    END IF;
 END //
 DELIMITER ;
 
@@ -385,22 +402,18 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Admin_Delete_User;
 DELIMITER //
 
-CREATE PROCEDURE Admin_Delete_User(In pUsername VARCHAR(20), IN adminID INT(10))
+CREATE PROCEDURE Admin_Delete_User(IN pUserID INT)
 BEGIN
-	DECLARE isAdmin BOOLEAN;
+    DELETE FROM tblUser
+    WHERE userID = pUserID;
 
-	SELECT isAdmin INTO isAdmin
-	FROM tblUser
-	WHERE userID = adminID;
-
-	IF isAdmin = 1 THEN
-		DELETE FROM tblUser
-		WHERE username = pUsername;
-		SELECT CONCAT(pUsername, ' deleted') AS message;
-	ELSE
-		SELECT 'User is not an admin' AS message;
-	END IF;
+    IF ROW_COUNT() > 0 THEN
+        SELECT CONCAT('User Deleted') AS message;
+    ELSE
+        SELECT 'User not found' AS message;
+    END IF;
 END //
+
 DELIMITER ;
 
 

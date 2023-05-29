@@ -15,6 +15,15 @@ namespace TaxiGame
     {
         private Home _home;
         private DataAccess dataAccess;
+        private int gameID;
+        public Gameboard(int gameID)
+        {
+            InitializeComponent();
+            _home = new Home();
+            dataAccess = new DataAccess();
+            this.gameID = gameID;
+        }
+
         public Gameboard()
         {
             InitializeComponent();

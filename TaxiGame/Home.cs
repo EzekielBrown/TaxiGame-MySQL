@@ -119,5 +119,44 @@ namespace TaxiGame
             }
         }
 
+        private void buttonJoin_Click(object sender, EventArgs e)
+        {
+            // Get the selected game
+            string selectedGame = listBoxGames.SelectedItem as string;
+
+            if (selectedGame != null)
+            {
+                // Extract the gameID from the selectedGame string
+                int gameID;
+                if (int.TryParse(selectedGame.Split('-')[0].Trim(), out gameID))
+                {
+                    int userID = 1; // Replace with the actual user ID of the logged-in user
+                    string result = dataAccess.Join_Game(gameID, userID);
+
+                    if (result == "Game Joined")
+                    {
+                        MessageBox.Show("Joined the game successfully.");
+                        Gameboard gameboard = new Gameboard(gameID);
+                        gameboard.Show();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to join the game.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Invalid game selected.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a game to join.");
+            }
+        }
+
+
+
     }
 }

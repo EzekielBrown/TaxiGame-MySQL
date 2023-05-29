@@ -327,7 +327,6 @@ namespace TaxiGame
                     int gameID = Convert.ToInt32(reader["gameID"]);
                     string username = reader["username"].ToString();
 
-                    // Create a GameInDB object and add it to the list
                     GameInDB game = new GameInDB(gameID, username);
                     games.Add(game);
                 }
@@ -338,21 +337,25 @@ namespace TaxiGame
             return games;
         }
 
-
-
-
-        public string Join_Game(string pUsername) 
+        public string Join_Game(int gameID, int userID)
         {
             List<MySqlParameter> joinGameParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
-            aUsername.Value = pUsername;
-            joinGameParams.Add(aUsername);
+            MySqlParameter aGameID = new MySqlParameter("@GameID", MySqlDbType.Int32);
+            aGameID.Value = gameID;
+            joinGameParams.Add(aGameID);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Join_Game(@Username)", joinGameParams.ToArray());
+            MySqlParameter aUserID = new MySqlParameter("@UserID", MySqlDbType.Int32);
+            aUserID.Value = userID;
+            joinGameParams.Add(aUserID);
+
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Join_Game(@GameID, @UserID)", joinGameParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
+
+
         public string User_Movement(string pUsername, int pTileID) 
         {
             List<MySqlParameter> userMovementParams = new List<MySqlParameter>();
