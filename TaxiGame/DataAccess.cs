@@ -242,10 +242,15 @@ namespace TaxiGame
         {
             List<MySqlParameter> createGameParams = new List<MySqlParameter>();
 
+            MySqlParameter aUsername = new MySqlParameter("@pUsername", MySqlDbType.VarChar, 20);
+            aUsername.Value = pUsername;
+            createGameParams.Add(aUsername);
+
             var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Create_Game(@pUsername)", createGameParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
 
         public class Tile
         {
@@ -293,15 +298,49 @@ namespace TaxiGame
             return tiles;
         }
 
-
-        public string Game_List() 
+        public class GameInDB
         {
-            List<MySqlParameter> gameListParams = new List<MySqlParameter>();
+            public int GameID { get; set; }
+            public string Username { get; set; }
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Game_List()", gameListParams.ToArray());
-
-            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+            public GameInDB(int gameID, string username)
+            {
+                GameID = gameID;
+                Username = username;
+            }
         }
+
+        public List<GameInDB> Game_List()
+        {
+            List<GameInDB> games = new List<GameInDB>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                var query = "SELECT g.gameID, u.username FROM tblGame g INNER JOIN tblUser u ON g.userID = u.userID";
+                var command = new MySqlCommand(query, connection);
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int gameID = Convert.ToInt32(reader["gameID"]);
+                    string username = reader["username"].ToString();
+
+                    // Create a GameInDB object and add it to the list
+                    GameInDB game = new GameInDB(gameID, username);
+                    games.Add(game);
+                }
+
+                reader.Close();
+            }
+
+            return games;
+        }
+
+
+
+
         public string Join_Game(string pUsername) 
         {
             List<MySqlParameter> joinGameParams = new List<MySqlParameter>();

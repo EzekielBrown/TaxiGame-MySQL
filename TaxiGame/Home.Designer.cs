@@ -36,9 +36,9 @@
             listBoxPlayers = new ListBox();
             buttonPlayers = new Button();
             buttonGames = new Button();
-            dataGridView1 = new DataGridView();
+            listBoxGames = new ListBox();
+            buttonJoin = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -94,7 +94,7 @@
             buttonAdmin.FlatStyle = FlatStyle.Flat;
             buttonAdmin.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             buttonAdmin.ForeColor = Color.FromArgb(245, 215, 166);
-            buttonAdmin.Location = new Point(465, 252);
+            buttonAdmin.Location = new Point(465, 385);
             buttonAdmin.Name = "buttonAdmin";
             buttonAdmin.Size = new Size(171, 46);
             buttonAdmin.TabIndex = 11;
@@ -143,21 +143,38 @@
             buttonGames.Text = "GAMES";
             buttonGames.UseVisualStyleBackColor = false;
             // 
-            // dataGridView1
+            // listBoxGames
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 276);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(171, 150);
-            dataGridView1.TabIndex = 15;
+            listBoxGames.FormattingEnabled = true;
+            listBoxGames.ItemHeight = 15;
+            listBoxGames.Location = new Point(12, 276);
+            listBoxGames.Name = "listBoxGames";
+            listBoxGames.Size = new Size(171, 94);
+            listBoxGames.TabIndex = 15;
+            // 
+            // buttonJoin
+            // 
+            buttonJoin.BackColor = Color.FromArgb(35, 31, 36);
+            buttonJoin.FlatAppearance.BorderSize = 0;
+            buttonJoin.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonJoin.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonJoin.FlatStyle = FlatStyle.Flat;
+            buttonJoin.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonJoin.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonJoin.Location = new Point(465, 252);
+            buttonJoin.Name = "buttonJoin";
+            buttonJoin.Size = new Size(171, 46);
+            buttonJoin.TabIndex = 16;
+            buttonJoin.Text = "JOIN GAME";
+            buttonJoin.UseVisualStyleBackColor = false;
             // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(694, 495);
-            Controls.Add(dataGridView1);
+            Controls.Add(buttonJoin);
+            Controls.Add(listBoxGames);
             Controls.Add(buttonGames);
             Controls.Add(buttonPlayers);
             Controls.Add(listBoxPlayers);
@@ -168,7 +185,6 @@
             Name = "Home";
             Text = "Home";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -182,6 +198,10 @@
         private ListBox listBoxPlayers;
         private Button buttonPlayers;
         private Button buttonGames;
-        private DataGridView dataGridView1;
+        private DataGridView dataGridViewGames;
+        private DataGridViewTextBoxColumn GameID;
+        private DataGridViewTextBoxColumn Username;
+        private ListBox listBoxGames;
+        private Button buttonJoin;
     }
 }

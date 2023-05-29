@@ -27,16 +27,29 @@ namespace TaxiGame
             _admin = new Admin();
 
             OnlinePlayers();
+            GameList();
 
         }
 
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
+            string currentUsername = "z";
+            string result = dataAccess.Create_Game(currentUsername);
 
-            _gameboard = new Gameboard();
-            _gameboard.Show();
-            this.Hide();
+            if (result == "Game Created")
+            {
+                MessageBox.Show("New game created successfully.");
+
+                _gameboard = new Gameboard();
+                _gameboard.Show();
+                this.Hide();
+            }
+            else
+            {
+                MessageBox.Show("Failed to create a new game.");
+            }
         }
+
 
 
         private void buttonAdmin_Click(object sender, EventArgs e)
@@ -94,6 +107,17 @@ namespace TaxiGame
             }
         }
 
+        private void GameList()
+        {
+            List<GameInDB> gameList = dataAccess.Game_List();
+
+            listBoxGames.Items.Clear();
+            foreach (GameInDB game in gameList)
+            {
+                string gameInfo = $"{game.GameID} - {game.Username}";
+                listBoxGames.Items.Add(gameInfo);
+            }
+        }
 
     }
 }
