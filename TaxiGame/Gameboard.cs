@@ -38,20 +38,20 @@ namespace TaxiGame
                 tilePanel.Size = new Size(50, 50);
                 tilePanel.Location = new Point((tile.Column - 1) * 50, (tile.Row - 1) * 50);
                 tilePanel.BorderStyle = BorderStyle.FixedSingle;
-                tilePanel.Tag = tile.TileID; // Store the TileID in Tag property for later use
-                tilePanel.Click += TilePanel_Click; // Add click event handler
+                tilePanel.Tag = tile.TileID; 
+                tilePanel.Click += TilePanel_Click; 
 
                 if (tile.TileID == playerCurrentTileID)
                 {
-                    tilePanel.BackColor = Color.Red; // Change the color of the player's tile
+                    tilePanel.BackColor = Color.Yellow; // The user
                 }
                 else if (tile.ItemID == 4)
                 {
-                    tilePanel.BackColor = Color.Gray; // Change the color of the tile with itemID 4 to gray
+                    tilePanel.BackColor = Color.Brown; // Wall
                 }
                 else if (tile.ItemID == 3)
                 {
-                    tilePanel.BackColor = Color.Brown; // Change the color of the tile with itemID 3 to brown
+                    tilePanel.BackColor = Color.Gray; // Road
                 }
                 else
                 {
