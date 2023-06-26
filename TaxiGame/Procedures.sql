@@ -268,7 +268,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Create_Game;
 DELIMITER //
 
-CREATE PROCEDURE Create_Game(IN pUsername VARCHAR(20))
+CREATE PROCEDURE Create_Game(IN pUsername VARCHAR(20), OUT pGameID INT)
 BEGIN
     DECLARE pUserID INT;
 
@@ -279,11 +279,11 @@ BEGIN
     INSERT INTO tblGame (tileID, userID)
     VALUES (DEFAULT, pUserID);
 
-    SELECT 'Game Created' AS Message;
-end //
-
+    SET pGameID = LAST_INSERT_ID();
+END //
 
 DELIMITER ;
+
 
 -- Get All Games Procedure
 

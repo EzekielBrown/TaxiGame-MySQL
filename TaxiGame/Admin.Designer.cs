@@ -40,6 +40,7 @@
             buttonUpdate = new Button();
             checkBoxIsLocked = new CheckBox();
             checkBoxIsAdmin = new CheckBox();
+            buttonCreate = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -52,7 +53,7 @@
             buttonDeleteUser.FlatStyle = FlatStyle.Flat;
             buttonDeleteUser.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             buttonDeleteUser.ForeColor = Color.FromArgb(245, 215, 166);
-            buttonDeleteUser.Location = new Point(465, 304);
+            buttonDeleteUser.Location = new Point(464, 356);
             buttonDeleteUser.Name = "buttonDeleteUser";
             buttonDeleteUser.Size = new Size(171, 46);
             buttonDeleteUser.TabIndex = 11;
@@ -145,7 +146,7 @@
             buttonUpdate.FlatStyle = FlatStyle.Flat;
             buttonUpdate.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             buttonUpdate.ForeColor = Color.FromArgb(245, 215, 166);
-            buttonUpdate.Location = new Point(465, 252);
+            buttonUpdate.Location = new Point(464, 304);
             buttonUpdate.Name = "buttonUpdate";
             buttonUpdate.Size = new Size(171, 46);
             buttonUpdate.TabIndex = 18;
@@ -173,11 +174,29 @@
             checkBoxIsAdmin.Text = "Admin?";
             checkBoxIsAdmin.UseVisualStyleBackColor = true;
             // 
+            // buttonCreate
+            // 
+            buttonCreate.BackColor = Color.FromArgb(35, 31, 36);
+            buttonCreate.FlatAppearance.BorderSize = 0;
+            buttonCreate.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonCreate.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonCreate.FlatStyle = FlatStyle.Flat;
+            buttonCreate.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonCreate.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonCreate.Location = new Point(464, 252);
+            buttonCreate.Name = "buttonCreate";
+            buttonCreate.Size = new Size(171, 46);
+            buttonCreate.TabIndex = 21;
+            buttonCreate.Text = "CREATE USER";
+            buttonCreate.UseVisualStyleBackColor = false;
+            buttonCreate.Click += buttonCreate_Click;
+            // 
             // Admin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(694, 495);
+            Controls.Add(buttonCreate);
             Controls.Add(checkBoxIsAdmin);
             Controls.Add(checkBoxIsLocked);
             Controls.Add(buttonUpdate);
@@ -208,5 +227,6 @@
         private Button buttonUpdate;
         private CheckBox checkBoxIsLocked;
         private CheckBox checkBoxIsAdmin;
+        private Button buttonCreate;
     }
 }

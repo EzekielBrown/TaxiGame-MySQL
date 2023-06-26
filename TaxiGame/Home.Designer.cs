@@ -38,6 +38,7 @@
             buttonGames = new Button();
             listBoxGames = new ListBox();
             buttonJoin = new Button();
+            buttonKill = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -169,11 +170,29 @@
             buttonJoin.UseVisualStyleBackColor = false;
             buttonJoin.Click += buttonJoin_Click;
             // 
+            // buttonKill
+            // 
+            buttonKill.BackColor = Color.FromArgb(35, 31, 36);
+            buttonKill.FlatAppearance.BorderSize = 0;
+            buttonKill.FlatAppearance.MouseDownBackColor = Color.FromArgb(39, 39, 39);
+            buttonKill.FlatAppearance.MouseOverBackColor = Color.Black;
+            buttonKill.FlatStyle = FlatStyle.Flat;
+            buttonKill.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonKill.ForeColor = Color.FromArgb(245, 215, 166);
+            buttonKill.Location = new Point(12, 376);
+            buttonKill.Name = "buttonKill";
+            buttonKill.Size = new Size(171, 46);
+            buttonKill.TabIndex = 17;
+            buttonKill.Text = "KILL GAME";
+            buttonKill.UseVisualStyleBackColor = false;
+            buttonKill.Click += buttonKill_Click;
+            // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(694, 495);
+            Controls.Add(buttonKill);
             Controls.Add(buttonJoin);
             Controls.Add(listBoxGames);
             Controls.Add(buttonGames);
@@ -204,5 +223,6 @@
         private DataGridViewTextBoxColumn Username;
         private ListBox listBoxGames;
         private Button buttonJoin;
+        private Button buttonKill;
     }
 }

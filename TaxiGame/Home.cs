@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using static TaxiGame.DataAccess;
+﻿using static TaxiGame.DataAccess;
 
 namespace TaxiGame
 {
@@ -18,29 +8,31 @@ namespace TaxiGame
         private bool isAdmin;
         private Admin _admin;
         private Gameboard _gameboard;
+        private string currentUsername;
 
 
-        public Home()
+
+        public Home(string username)
         {
             InitializeComponent();
             dataAccess = new DataAccess();
-            _admin = new Admin();
+            _admin = new Admin(this);
+            currentUsername = username;
 
             OnlinePlayers();
             GameList();
-
+            
         }
 
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
-            string currentUsername = "z";
-            string result = dataAccess.Create_Game(currentUsername);
+            int newGameID = dataAccess.Create_Game(currentUsername);
 
-            if (result == "Game Created")
+            if (newGameID > 0) 
             {
                 MessageBox.Show("New game created successfully.");
 
-                _gameboard = new Gameboard();
+                _gameboard = new Gameboard(this, newGameID, currentUsername);
                 _gameboard.Show();
                 this.Hide();
             }
@@ -49,8 +41,6 @@ namespace TaxiGame
                 MessageBox.Show("Failed to create a new game.");
             }
         }
-
-
 
         private void buttonAdmin_Click(object sender, EventArgs e)
         {
@@ -67,8 +57,6 @@ namespace TaxiGame
 
         private void buttonLogOut_Click(object sender, EventArgs e)
         {
-            string currentUsername = "z";
-
             string result = dataAccess.Log_Out(currentUsername);
 
             if (result == "Logout Successful")
@@ -93,6 +81,7 @@ namespace TaxiGame
         {
             this.isAdmin = isAdmin;
             buttonAdmin.Visible = isAdmin;
+            buttonKill.Visible = isAdmin;
         }
 
         private void OnlinePlayers()
@@ -136,7 +125,7 @@ namespace TaxiGame
                     if (result == "Game Joined")
                     {
                         MessageBox.Show("Joined the game successfully.");
-                        Gameboard gameboard = new Gameboard(gameID);
+                        Gameboard gameboard = new Gameboard(this, gameID, currentUsername);
                         gameboard.Show();
                         this.Hide();
                     }
@@ -156,7 +145,9 @@ namespace TaxiGame
             }
         }
 
-
-
+        private void buttonKill_Click(object sender, EventArgs e)
+        {
+            string selectedGame = listBoxGames.SelectedItem as string;
+        }
     }
 }

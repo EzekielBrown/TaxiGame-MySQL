@@ -2,17 +2,16 @@ namespace TaxiGame
 {
     public partial class Login : Form
     {
-        private Login _login;
         private Register _register;
         private DataAccess dataAccess;
         private Home _home;
         private bool isAdmin;
+
         public Login()
         {
             InitializeComponent();
             _register = new Register();
             dataAccess = new DataAccess();
-            _home = new Home();
         }
 
         private void buttonLogin_Click(object sender, EventArgs e)
@@ -22,13 +21,18 @@ namespace TaxiGame
 
             string result = dataAccess.Log_In(username, password, out isAdmin);
 
-            if (result == "Login Successful") 
+            if (result == "Login Successful")
             {
+                _home = new Home(username);
                 _home.SetAdminStatus(isAdmin);
 
                 this.Hide();
                 _home.Show();
-            } 
+            }
+            else if (result == "User Exists")
+            {
+                MessageBox.Show("Incorrect Password");
+            }
             else
             {
                 MessageBox.Show("Login Failed");

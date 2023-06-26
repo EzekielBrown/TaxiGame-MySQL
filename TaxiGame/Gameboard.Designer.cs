@@ -52,10 +52,11 @@
             // 
             // panelGame
             // 
-            panelGame.Location = new Point(155, 186);
+            panelGame.Location = new Point(158, 144);
             panelGame.Name = "panelGame";
-            panelGame.Size = new Size(680, 418);
-            panelGame.TabIndex = 14;
+            panelGame.Size = new Size(700, 500);
+            panelGame.TabIndex = 1;
+            panelGame.Click += TilePanel_Click;
             // 
             // Gameboard
             // 
@@ -71,6 +72,7 @@
         }
 
         #endregion
+
         private Button buttonHome;
         private Panel panelGame;
     }

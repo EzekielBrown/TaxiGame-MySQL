@@ -1,24 +1,16 @@
-﻿using MySqlX.XDevAPI.Common;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static TaxiGame.DataAccess;
+﻿using static TaxiGame.DataAccess;
 
 namespace TaxiGame
 {
     public partial class Admin : Form
     {
         private DataAccess dataAccess;
-        public Admin()
+        private Home homeForm;
+        public Admin(Home homeForm)
         {
             InitializeComponent();
             dataAccess = new DataAccess();
+            this.homeForm = homeForm;
         }
 
         private void buttonGetUser_Click(object sender, EventArgs e)
@@ -96,9 +88,13 @@ namespace TaxiGame
 
         private void buttonReturn_Click(object sender, EventArgs e)
         {
-            Home homeForm = new Home();
             homeForm.Show();
             this.Close();
+        }
+
+        private void buttonCreate_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

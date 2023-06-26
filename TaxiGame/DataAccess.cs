@@ -1,9 +1,4 @@
 ﻿using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 
 namespace TaxiGame
@@ -180,11 +175,15 @@ namespace TaxiGame
 
         private void UpdateLoginAttempts(MySqlConnection connection, int userID, int numLoginAttempts)
         {
-            MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET numLoginAttempts = @NumLoginAttempts WHERE userID = @UserID", mySqlConnection);
+            if (connection.State != ConnectionState.Open)
+                connection.Open();
+
+            MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET numLoginAttempts = @NumLoginAttempts WHERE userID = @UserID", connection);
             cmd.Parameters.AddWithValue("@NumLoginAttempts", numLoginAttempts);
             cmd.Parameters.AddWithValue("@UserID", userID);
             cmd.ExecuteNonQuery();
         }
+
 
         private void LockAccount(MySqlConnection connection, int userID)
         {
@@ -238,35 +237,63 @@ namespace TaxiGame
 
             return activePlayers;
         }
-        public string Create_Game(string pUsername)
+        public int Create_Game(string pUsername)
         {
-            List<MySqlParameter> createGameParams = new List<MySqlParameter>();
+            try
+            {
+                List<MySqlParameter> createGameParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@pUsername", MySqlDbType.VarChar, 20);
-            aUsername.Value = pUsername;
-            createGameParams.Add(aUsername);
+                MySqlParameter aUsername = new MySqlParameter("@pUsername", MySqlDbType.VarChar, 20);
+                aUsername.Value = pUsername;
+                createGameParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Create_Game(@pUsername)", createGameParams.ToArray());
+                MySqlParameter aGameID = new MySqlParameter("@pGameID", MySqlDbType.Int32);
+                aGameID.Direction = ParameterDirection.Output;
+                createGameParams.Add(aGameID);
 
-            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+                mySqlConnection.Open(); // Open connection
+
+                MySqlHelper.ExecuteNonQuery(mySqlConnection, "CALL Create_Game(@pUsername, @pGameID)", createGameParams.ToArray());
+
+                return Convert.ToInt32(aGameID.Value);
+            }
+            catch (Exception ex)
+            {
+                return -1; 
+            }
+            finally
+            {
+                if (mySqlConnection.State == ConnectionState.Open)
+                {
+                    mySqlConnection.Close(); // Close connection
+                }
+            }
         }
+
+
 
 
         public class Tile
         {
-            public Tile(int column, int row, bool isHomeTile, bool isDropOffTile)
+            public Tile(int tileID, int column, int row, bool isHomeTile, bool isDropOffTile, int itemID)
             {
+                TileID = tileID;
                 Column = column;
                 Row = row;
                 IsHomeTile = isHomeTile;
                 IsDropOffTile = isDropOffTile;
+                ItemID = itemID;
             }
 
+            public int TileID { get; set; }
             public int Column { get; set; }
             public int Row { get; set; }
             public bool IsHomeTile { get; set; }
             public bool IsDropOffTile { get; set; }
+            public int ItemID { get; set; }
         }
+
+
 
 
         public List<Tile> GetTiles()
@@ -277,7 +304,8 @@ namespace TaxiGame
             {
                 connection.Open();
 
-                var query = "SELECT `column`, `row`, homeTile, DropOffTile FROM tblTile";
+                var query = "SELECT `column`, `row`, homeTile, DropOffTile, tileID, itemID FROM tblTile";
+
                 var command = new MySqlCommand(query, connection);
                 var reader = command.ExecuteReader();
 
@@ -287,8 +315,10 @@ namespace TaxiGame
                     int row = Convert.ToInt32(reader["row"]);
                     bool isHomeTile = Convert.ToBoolean(reader["homeTile"]);
                     bool isDropOffTile = Convert.ToBoolean(reader["DropOffTile"]);
+                    int tileID = Convert.ToInt32(reader["tileID"]);
+                    int itemID = Convert.ToInt32(reader["itemID"]);
 
-                    Tile tile = new Tile(column, row, isHomeTile, isDropOffTile);
+                    Tile tile = new Tile(tileID, column, row, isHomeTile, isDropOffTile, itemID);
                     tiles.Add(tile);
                 }
 
@@ -297,6 +327,34 @@ namespace TaxiGame
 
             return tiles;
         }
+
+
+        public int GetPlayerCurrentTileID(string username)
+        {
+            int currentTileID = 0;
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                var query = "SELECT tileID FROM tblGame WHERE userID = (SELECT userID FROM tblUser WHERE username = @Username) ORDER BY gameID DESC LIMIT 1";
+                var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Username", username);
+
+                var reader = command.ExecuteReader();
+
+                if (reader.Read() && !reader.IsDBNull(0))
+                {
+                    currentTileID = Convert.ToInt32(reader["tileID"]);
+                }
+
+                reader.Close();
+            }
+
+            return currentTileID;
+        }
+
+
 
         public class GameInDB
         {
@@ -341,37 +399,36 @@ namespace TaxiGame
         {
             List<MySqlParameter> joinGameParams = new List<MySqlParameter>();
 
-            MySqlParameter aGameID = new MySqlParameter("@GameID", MySqlDbType.Int32);
+            MySqlParameter aGameID = new MySqlParameter("@pGameID", MySqlDbType.Int32);
             aGameID.Value = gameID;
             joinGameParams.Add(aGameID);
 
-            MySqlParameter aUserID = new MySqlParameter("@UserID", MySqlDbType.Int32);
+            MySqlParameter aUserID = new MySqlParameter("@pUserID", MySqlDbType.Int32);
             aUserID.Value = userID;
             joinGameParams.Add(aUserID);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Join_Game(@GameID, @UserID)", joinGameParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Join_Game(@pGameID, @pUserID)", joinGameParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
 
-
-
-        public string User_Movement(string pUsername, int pTileID) 
+        public string User_Movement(string pUsername, int pTileID)
         {
             List<MySqlParameter> userMovementParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
+            MySqlParameter aUsername = new MySqlParameter("@p_Username", MySqlDbType.VarChar, 20);
             aUsername.Value = pUsername;
             userMovementParams.Add(aUsername);
 
-            MySqlParameter aTileID = new MySqlParameter("@TileID", MySqlDbType.Int32);
+            MySqlParameter aTileID = new MySqlParameter("@p_TileID", MySqlDbType.Int32);
             aTileID.Value = pTileID;
             userMovementParams.Add(aTileID);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL User_Movement(@Username, @TileID)", userMovementParams.ToArray());
+            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL User_Movement(@p_Username, @p_TileID)", userMovementParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
         public string Chat_Message(string pUsername, string pMessage) 
         {
             List<MySqlParameter> chatMessageParams = new List<MySqlParameter>();
@@ -416,9 +473,6 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
-
-
-
 
         public string Admin_New_User(string pUsername, string pPassword, string pEmail) 
         {
