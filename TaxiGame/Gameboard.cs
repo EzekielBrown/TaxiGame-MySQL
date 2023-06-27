@@ -120,9 +120,9 @@ namespace TaxiGame
 
             if (currentTile == null) return;
 
-            Tile newTile = tiles.FirstOrDefault(t => t.Column == currentTile.Column + deltaX && t.Row == currentTile.Row + deltaY); // finds the tile the player trying to move to
+            Tile newTile = tiles.FirstOrDefault(t => t.Column == currentTile.Column + deltaX && t.Row == currentTile.Row + deltaY);
 
-            if (newTile != null && (newTile.ItemID == 4 || newTile.ItemID == 5)) // checks if player hits the wall then ends game
+            if (newTile != null && (newTile.ItemID == 4 || newTile.ItemID == 5))
             {
                 MessageBox.Show("You have crashed. Game over", "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 dataAccess.EndGame(gameID);
@@ -131,21 +131,22 @@ namespace TaxiGame
                 return;
             }
 
-            if (newTile != null && newTile.ItemID == 1) // checks if tile is passenger
+            if (newTile != null && newTile.ItemID == 1)
             {
                 hasPassenger = true;
-                dataAccess.SetTileItemID(newTile.TileID, 3); // turns the tile back into a road
+                dataAccess.SetTileItemID(newTile.TileID, 3);
             }
 
             int newTileID = newTile?.TileID ?? playerCurrentTileID;
 
             if (newTileID != playerCurrentTileID)
             {
-                string result = dataAccess.User_Movement(username, newTileID); // update players pos
+                string result = dataAccess.User_Movement(username, newTileID);
 
-                if (hasPassenger && newTileID == 19) // checks to see if players is on drop off tile
+                if (hasPassenger && newTileID == 19) // if players are on drop off tile
                 {
-                    dataAccess.IncrementPlayerScore(username, 100); // increase score by 100
+                    int numberOfPassengers = dataAccess.GetUserPassengers(username); // get the number of passengers
+                    dataAccess.IncrementPlayerScore(username, 100 * numberOfPassengers); // increase score by 100 per passenger
                     dataAccess.SpawnRandomPassenger(); // spawns another passenger
                     dataAccess.ResetPassengerCount(username); // resets passengers
                 }
@@ -153,12 +154,12 @@ namespace TaxiGame
                 CreateGameboard();
             }
 
-            if (newTile != null && newTile.ItemID == 1) // checks if player is on a tile with a passenger
+            if (newTile != null && newTile.ItemID == 1)
             {
                 bool passengerAdded = dataAccess.AddPassengerToInventory(username);
                 if (passengerAdded)
                 {
-                    dataAccess.SetTileItemID(newTile.TileID, 3); // turns tile back into road
+                    dataAccess.SetTileItemID(newTile.TileID, 3);
                 }
                 else
                 {
@@ -166,6 +167,7 @@ namespace TaxiGame
                 }
             }
         }
+
 
         private void buttonUp_Click(object sender, EventArgs e)
         {

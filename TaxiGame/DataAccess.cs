@@ -14,14 +14,12 @@ namespace TaxiGame
             bool usernameExists = CheckUsernameExists(pUsername);
             if (usernameExists)
             {
-                MessageBox.Show("Username already exists. Please choose a different username.");
                 return "User Exists";
             }
 
             bool emailExists = CheckEmailExists(pEmail);
             if (emailExists)
             {
-                MessageBox.Show("Email is already taken. Please choose a different email.");
                 return "Email Exists";
             }
 
@@ -43,6 +41,7 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
 
         private bool CheckUsernameExists(string pUsername)
         {
@@ -513,26 +512,28 @@ namespace TaxiGame
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
 
-        public string Admin_New_User(string pUsername, string pPassword, string pEmail) 
+        public string Admin_New_User(string pUsername, string pPassword, string pEmail)
         {
-            List<MySqlParameter> adminNewUserParams = new List<MySqlParameter>();
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                var cmd = connection.CreateCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "Admin_New_User";
 
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
-            aUsername.Value = pUsername;
-            adminNewUserParams.Add(aUsername);
+                cmd.Parameters.AddWithValue("@pUsername", pUsername);
+                cmd.Parameters.AddWithValue("@pPassword", pPassword);
+                cmd.Parameters.AddWithValue("@pEmail", pEmail);
 
-            MySqlParameter aPassword = new MySqlParameter("@Password", MySqlDbType.VarChar, 45);
-            aPassword.Value = pPassword;
-            adminNewUserParams.Add(aPassword);
+                var pMessage = cmd.Parameters.Add("@pMessage", MySqlDbType.VarChar, 255);
+                pMessage.Direction = ParameterDirection.Output;
 
-            MySqlParameter aEmail = new MySqlParameter("@Email", MySqlDbType.VarChar, 100);
-            aEmail.Value = pEmail;
-            adminNewUserParams.Add(aEmail);
+                cmd.ExecuteNonQuery();
 
-            var aDataSet = MySqlHelper.ExecuteDataset(mySqlConnection, "CALL Admin_New_User(@Username, @Password, @Email)", adminNewUserParams.ToArray());
-
-            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+                return pMessage.Value.ToString();
+            }
         }
+
         public string Admin_Delete_User(int userID)
         {
             List<MySqlParameter> adminDeleteUserParams = new List<MySqlParameter>();

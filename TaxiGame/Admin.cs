@@ -47,7 +47,6 @@ namespace TaxiGame
             bool isLocked = checkBoxIsLocked.Checked;
             bool isAdmin = checkBoxIsAdmin.Checked;
 
-            // Call the Admin_Edit_User method from DataAccess to update the user data
             string result = dataAccess.Admin_Edit_User(username, password, email, isLocked, isAdmin);
 
 
@@ -94,7 +93,14 @@ namespace TaxiGame
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
+            string username = textBoxUsername.Text;
+            string password = textBoxPassword.Text;
+            string email = textBoxEmail.Text;
 
+            string result = dataAccess.Admin_New_User(username, password, email);
+
+            MessageBox.Show(result);
         }
+
     }
 }
