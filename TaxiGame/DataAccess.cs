@@ -110,17 +110,25 @@ namespace TaxiGame
             {
                 connection.Open();
 
-                var aDataSet = MySqlHelper.ExecuteDataset(connection, @"    
-                    SELECT userID, password, numLoginAttempts, isLocked, isAdmin
-                    FROM tblUser 
-                    WHERE username = @pUsername", logInParams.ToArray());
+                var aDataSet = MySqlHelper.ExecuteDataset(connection, @"
+            SELECT userID, password, numLoginAttempts, isLocked, lockedUntil, isAdmin
+            FROM tblUser 
+            WHERE username = @pUsername", logInParams.ToArray());
 
                 if (aDataSet.Tables[0].Rows.Count > 0)
                 {
                     string passwordFromDb = aDataSet.Tables[0].Rows[0].Field<string>("password");
                     int numLoginAttempts = aDataSet.Tables[0].Rows[0].Field<int>("numLoginAttempts");
                     ulong isLocked = aDataSet.Tables[0].Rows[0].Field<ulong>("isLocked");
+                    DateTime? lockedUntil = aDataSet.Tables[0].Rows[0].Field<DateTime?>("lockedUntil");
                     isAdmin = aDataSet.Tables[0].Rows[0].Field<bool>("isAdmin");
+
+                    // Check if the lock duration has passed
+                    if (isLocked == 1 && lockedUntil.HasValue && DateTime.Now > lockedUntil.Value)
+                    {
+                        UnlockAccount(connection, aDataSet.Tables[0].Rows[0].Field<int>("userID"));
+                        isLocked = 0;
+                    }
 
                     if (passwordFromDb == pPassword && isLocked == 0)
                     {
@@ -156,6 +164,12 @@ namespace TaxiGame
             }
         }
 
+        private void UnlockAccount(MySqlConnection connection, int userID)
+        {
+            MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET isLocked = 0, numLoginAttempts = 0, lockedUntil = NULL WHERE userID = @UserID", connection);
+            cmd.Parameters.AddWithValue("@UserID", userID);
+            cmd.ExecuteNonQuery();
+        }
 
 
         private void UpdateUserStatus(MySqlConnection connection, int userID)
@@ -188,8 +202,14 @@ namespace TaxiGame
 
         private void LockAccount(MySqlConnection connection, int userID)
         {
-            MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET isLocked = 1 WHERE userID = @UserID", mySqlConnection);
+            if (connection.State != ConnectionState.Open)
+                connection.Open();
+
+            DateTime lockedUntil = DateTime.Now.AddMinutes(5);
+
+            MySqlCommand cmd = new MySqlCommand("UPDATE tblUser SET isLocked = 1, lockedUntil = @LockedUntil WHERE userID = @UserID", connection);
             cmd.Parameters.AddWithValue("@UserID", userID);
+            cmd.Parameters.AddWithValue("@LockedUntil", lockedUntil);
             cmd.ExecuteNonQuery();
         }
 

@@ -29,15 +29,20 @@ namespace TaxiGame
                 this.Hide();
                 _home.Show();
             }
-            else if (result == "User Exists")
+            else if (result == "Account Locked")
             {
-                MessageBox.Show("Incorrect Password");
+                MessageBox.Show("Your account is locked. Please try again later.");
+            }
+            else if (result == "Incorrect Password")
+            {
+                MessageBox.Show("Incorrect password.");
             }
             else
             {
-                MessageBox.Show("Login Failed");
+                MessageBox.Show("Login failed.");
             }
         }
+
 
         private void buttonLogOut_Click(object sender, EventArgs e)
         {
