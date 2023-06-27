@@ -64,10 +64,14 @@ CREATE TABLE tblGame
 
 CREATE TABLE tblInventory
 (
-	inventoryID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	itemID INT,
-	userID INT
+    inventoryID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    userID INT NOT NULL,
+    itemID INT, -- This column was missing
+    passengerCount INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_userID FOREIGN KEY (userID) REFERENCES tblUser(userID),
+    CONSTRAINT chk_passengerCount CHECK (passengerCount >= 0 AND passengerCount <= 3)
 );
+
 
 
 CREATE TABLE tblChat
@@ -127,6 +131,14 @@ BEGIN
 	('Wall', 'Tiles that users cant go on', 0, 0),
 	('WallNoSpawn', 'Passengers wont spawn on this tile', 0, 0);
 
+	INSERT INTO tblInventory (userID, itemID, passengerCount)
+	SELECT (SELECT userID FROM tblUser WHERE username = 'z'), (SELECT itemID FROM tblItem WHERE name = 'Passenger'), 1 UNION
+	SELECT (SELECT userID FROM tblUser WHERE username = 'admin'), (SELECT itemID FROM tblItem WHERE name = 'Passenger'), 0 UNION
+	SELECT (SELECT userID FROM tblUser WHERE username = 'Online'), (SELECT itemID FROM tblItem WHERE name = 'Passenger'), 2 UNION
+	SELECT (SELECT userID FROM tblUser WHERE username = 'locked'), (SELECT itemID FROM tblItem WHERE name = 'Passenger'), 1 UNION
+	SELECT (SELECT userID FROM tblUser WHERE username = 'delete'), (SELECT itemID FROM tblItem WHERE name = 'Passenger'), 0;
+
+
 	INSERT INTO tblTile (`column`, `row`, homeTile, DropOffTile, itemID)
 	VALUES 
 	(1, 1, 0, 0, 5),
@@ -144,10 +156,10 @@ BEGIN
 	(13, 1, 0, 0, 4),
 	(14, 1, 0, 0, 4),
 	(1, 2, 0, 0, 5),
-	(2, 2, 0, 0, 1),
+	(2, 2, 1, 0, 3),
 	(3, 2, 0, 0, 3),
 	(4, 2, 0, 0, 3),
-	(5, 2, 0, 0, 2),
+	(5, 2, 0, 1, 3),
 	(6, 2, 0, 0, 4),
 	(7, 2, 0, 0, 3),
 	(8, 2, 0, 0, 3),

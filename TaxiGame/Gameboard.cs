@@ -21,6 +21,8 @@ namespace TaxiGame
             this.username = username;
             CreateGameboard();
 
+            dataAccess.SpawnRandomPassenger();
+
             this.KeyDown += Gameboard_KeyDown;
             this.KeyPreview = true;
 
@@ -137,6 +139,7 @@ namespace TaxiGame
             int playerCurrentTileID = dataAccess.GetPlayerCurrentTileID(username);
             List<Tile> tiles = dataAccess.GetTiles();
             Tile currentTile = tiles.FirstOrDefault(t => t.TileID == playerCurrentTileID);
+            bool hasPassenger = dataAccess.HasPassengerInInventory(username); // <---- Note here: Check if the player has a passenger in their inventory
 
             if (currentTile == null) return;
 
@@ -146,49 +149,69 @@ namespace TaxiGame
             // Check if the new tile's ItemID is 4 or 5, if so, show message and end the game
             if (newTile != null && (newTile.ItemID == 4 || newTile.ItemID == 5))
             {
-                // Show message box
                 MessageBox.Show("You have crashed. Game over", "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-                // End the game in the database
                 dataAccess.EndGame(gameID);
-
-                // Send the user back to the home screen
                 this.Hide();
                 _home.Show();
                 return;
             }
 
-            int newTileID = tiles.FirstOrDefault(t => t.Column == currentTile.Column + deltaX && t.Row == currentTile.Row + deltaY)?.TileID ?? playerCurrentTileID;
-
-            // Check if the player is moving onto a tile with TileID 4 or 5
-            if (newTileID == 4 || newTileID == 5)
+            // Check if the player has moved onto a tile with ItemID 1 (picked up a passenger)
+            if (newTile != null && newTile.ItemID == 1)
             {
-                // Display a message saying "You have crashed. Game over"
-                MessageBox.Show("You have crashed. Game over");
-
-                // End the game by deleting it from the database
-                dataAccess.EndGame(gameID);
-
-                // Send the player back to the home
-                this.Hide();
-                _home.Show();
+                hasPassenger = true;
+                // Update the tile's itemID back to 3 in the database (turn it back into a road)
+                dataAccess.SetTileItemID(newTile.TileID, 3);
             }
-            else
-            {
-                // Update player position
-                if (newTileID != playerCurrentTileID)
-                {
-                    string result = dataAccess.User_Movement(username, newTileID);
 
-                    // Refresh the game board to reflect player's new position
-                    panelGame.Controls.Clear();
-                    CreateGameboard();
+            int newTileID = newTile?.TileID ?? playerCurrentTileID;
+
+            // Update player position
+            if (newTileID != playerCurrentTileID)
+            {
+                string result = dataAccess.User_Movement(username, newTileID);
+
+                // Check if the player has reached tileID 19 with a passenger
+                if (hasPassenger && newTileID == 19) // Checking if the player has reached tileID 19 with a passenger
+                {
+                    // Increase the player's score by 100
+                    dataAccess.IncrementPlayerScore(username, 100);
+
+                    // Spawn another passenger randomly on a road tile
+                    dataAccess.SpawnRandomPassenger();
+
+                    // Reset the players passenger counter to 0
+                    dataAccess.ResetPassengerCount(username);
+                }
+
+
+                // Refresh the game board to reflect player's new position
+                panelGame.Controls.Clear();
+                CreateGameboard();
+            }
+
+            // Check if the player has moved onto a tile with ItemID 1 (picked up a passenger)
+            if (newTile != null && newTile.ItemID == 1)
+            {
+                // Increment passenger count in inventory
+                bool passengerAdded = dataAccess.AddPassengerToInventory(username);
+                if (passengerAdded)
+                {
+                    // Update the tile's itemID back to 3 in the database (turn it back into a road)
+                    dataAccess.SetTileItemID(newTile.TileID, 3);
+                }
+                else
+                {
+                    // Inform the user that inventory is full
+                    MessageBox.Show("Inventory is full!", "Inventory", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
 
 
-            private void Gameboard_KeyDown(object sender, KeyEventArgs e)
+
+
+        private void Gameboard_KeyDown(object sender, KeyEventArgs e)
         {
             // Check which key is pressed and call the appropriate button's Click event handler
             switch (e.KeyCode)

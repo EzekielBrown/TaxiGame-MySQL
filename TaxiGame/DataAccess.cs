@@ -586,6 +586,119 @@ namespace TaxiGame
             return 0;
         }
 
+        public void SetTileItemID(int tileID, int itemID)
+        {
+            string query = "UPDATE tblTile SET itemID = @ItemID WHERE tileID = @TileID";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@TileID", tileID);
+                    command.Parameters.AddWithValue("@ItemID", itemID);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void IncrementPlayerScore(string username, int amount)
+        {
+            string query = "UPDATE tblUser SET score = score + @Amount WHERE username = @Username";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Username", username);
+                    command.Parameters.AddWithValue("@Amount", amount);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        public void SpawnRandomPassenger()
+        {
+            string query = "UPDATE tblTile SET itemID = 1 WHERE itemID = 3 ORDER BY RAND() LIMIT 1";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public bool AddPassengerToInventory(string username)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                string query = "UPDATE tblInventory SET passengerCount = passengerCount + 1 WHERE userID = (SELECT userID FROM tblUser WHERE username = @username) AND passengerCount < 3";
+
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@username", username);
+
+                connection.Open();
+
+                int rowsAffected = command.ExecuteNonQuery();
+
+                return rowsAffected > 0;
+            }
+        }
+        public void ResetPassengerCount(string username)
+        {
+            string query = @"
+        UPDATE tblInventory
+        SET passengerCount = 0
+        WHERE userID = (SELECT userID FROM tblUser WHERE username = @Username)
+    ";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Username", username);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public bool HasPassengerInInventory(string username)
+        {
+            string query = @"
+        SELECT passengerCount
+        FROM tblInventory
+        WHERE userID = (SELECT userID FROM tblUser WHERE username = @Username)
+    ";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Username", username);
+
+                    connection.Open();
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int passengerCount = reader.GetInt32("passengerCount");
+                            return passengerCount > 0;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
 
 
     }
