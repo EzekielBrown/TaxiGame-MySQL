@@ -37,6 +37,7 @@
             buttonRight = new Button();
             buttonDown = new Button();
             richTextBox1 = new RichTextBox();
+            passengers = new Label();
             SuspendLayout();
             // 
             // buttonHome
@@ -70,7 +71,7 @@
             score.BackColor = Color.Transparent;
             score.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             score.ForeColor = Color.FromArgb(245, 215, 166);
-            score.Location = new Point(264, 84);
+            score.Location = new Point(268, 71);
             score.Name = "score";
             score.Size = new Size(18, 20);
             score.TabIndex = 15;
@@ -140,9 +141,21 @@
             // 
             richTextBox1.Location = new Point(12, 144);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(129, 129);
+            richTextBox1.Size = new Size(129, 220);
             richTextBox1.TabIndex = 21;
-            richTextBox1.Text = "Click on the home tile to start.\n\nPick up Pink Passengers and drop them off at the Blue Drop off zone\n";
+            richTextBox1.Text = "Click on the home tile to start.\n\nUse WASD to move taxi\n\nPick up Pink Passengers and drop them off at the Blue Drop off zone for score\n\nAvoid the wall or you will crash!";
+            // 
+            // passengers
+            // 
+            passengers.AutoSize = true;
+            passengers.BackColor = Color.Transparent;
+            passengers.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            passengers.ForeColor = Color.FromArgb(245, 215, 166);
+            passengers.Location = new Point(268, 97);
+            passengers.Name = "passengers";
+            passengers.Size = new Size(18, 20);
+            passengers.TabIndex = 22;
+            passengers.Text = "0";
             // 
             // Gameboard
             // 
@@ -150,6 +163,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(984, 647);
+            Controls.Add(passengers);
             Controls.Add(richTextBox1);
             Controls.Add(buttonDown);
             Controls.Add(buttonRight);
@@ -175,5 +189,6 @@
         private Button buttonRight;
         private Button buttonDown;
         private RichTextBox richTextBox1;
+        private Label passengers;
     }
 }

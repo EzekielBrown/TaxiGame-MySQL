@@ -207,7 +207,6 @@ namespace TaxiGame
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
 
-
         public string Delete_User(string pUsername)
         {
             List<MySqlParameter> deleteUserParams = new List<MySqlParameter>();
@@ -271,9 +270,6 @@ namespace TaxiGame
             }
         }
 
-
-
-
         public class Tile
         {
             public Tile(int tileID, int column, int row, bool isHomeTile, bool isDropOffTile, int itemID)
@@ -293,9 +289,6 @@ namespace TaxiGame
             public bool IsDropOffTile { get; set; }
             public int ItemID { get; set; }
         }
-
-
-
 
         public List<Tile> GetTiles()
         {
@@ -577,7 +570,6 @@ namespace TaxiGame
             }
             catch (Exception ex)
             {
-                // Optionally log or handle exception
             }
             finally
             {
@@ -585,6 +577,40 @@ namespace TaxiGame
             }
             return 0;
         }
+
+        public int GetUserPassengers(string username)
+        {
+            try
+            {
+                mySqlConnection.Open();
+
+                string query = @"
+            SELECT passengerCount 
+            FROM tblInventory 
+            INNER JOIN tblUser ON tblInventory.userID = tblUser.userID 
+            WHERE tblUser.username = @username";
+                using (var command = new MySqlCommand(query, mySqlConnection))
+                {
+                    command.Parameters.AddWithValue("@username", username);
+                    object result = command.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+            return 0;
+        }
+
+
+
 
         public void SetTileItemID(int tileID, int itemID)
         {
@@ -700,6 +726,23 @@ namespace TaxiGame
             return false;
         }
 
+        public bool KillGame(int gameID)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString)) 
+            {
+                connection.Open();
+
+                string query = "DELETE FROM tblGame WHERE gameID = @gameID";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@gameID", gameID);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return rowsAffected > 0; 
+                }
+            }
+        }
 
     }
 

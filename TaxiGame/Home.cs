@@ -147,7 +147,42 @@ namespace TaxiGame
 
         private void buttonKill_Click(object sender, EventArgs e)
         {
-            string selectedGame = listBoxGames.SelectedItem as string;
+            if (isAdmin)
+            {
+                string selectedGame = listBoxGames.SelectedItem as string;
+
+                if (selectedGame != null)
+                {
+                    int gameID;
+                    if (int.TryParse(selectedGame.Split('-')[0].Trim(), out gameID))
+                    {
+                        bool result = dataAccess.KillGame(gameID);
+
+                        if (result)
+                        {
+                            MessageBox.Show("The game has been successfully deleted.");
+                            GameList(); 
+                        }
+                        else
+                        {
+                            MessageBox.Show("Failed to delete the game.");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid game selected.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please select a game to delete.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("You do not have admin privileges.");
+            }
         }
+
     }
 }
