@@ -429,6 +429,7 @@ namespace TaxiGame
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
 
+
         public string Chat_Message(string pUsername, string pMessage) 
         {
             List<MySqlParameter> chatMessageParams = new List<MySqlParameter>();
@@ -532,10 +533,38 @@ namespace TaxiGame
             return null;
         }
 
+        public int GetUserScore(string username)
+        {
+            try
+            {
+                mySqlConnection.Open();
+
+                string query = "SELECT score FROM tblUser WHERE username = @username";
+                using (var command = new MySqlCommand(query, mySqlConnection))
+                {
+                    command.Parameters.AddWithValue("@username", username);
+                    object result = command.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Optionally log or handle exception
+            }
+            finally
+            {
+                mySqlConnection.Close();
+            }
+            return 0;
+        }
+
 
 
     }
 
-    
+
 
 }
