@@ -60,7 +60,7 @@
             buttonCreate.Location = new Point(465, 383);
             buttonCreate.Name = "buttonCreate";
             buttonCreate.Size = new Size(171, 46);
-            buttonCreate.TabIndex = 8;
+            buttonCreate.TabIndex = 4;
             buttonCreate.Text = "CREATE";
             buttonCreate.UseVisualStyleBackColor = false;
             buttonCreate.Click += buttonCreate_Click;
@@ -68,19 +68,21 @@
             // textUsername
             // 
             textUsername.Location = new Point(465, 210);
+            textUsername.MaxLength = 30;
             textUsername.Name = "textUsername";
             textUsername.PlaceholderText = "USERNAME";
             textUsername.Size = new Size(171, 23);
-            textUsername.TabIndex = 9;
+            textUsername.TabIndex = 1;
             // 
             // textPassword
             // 
             textPassword.Location = new Point(465, 268);
+            textPassword.MaxLength = 40;
             textPassword.Name = "textPassword";
             textPassword.PasswordChar = '*';
             textPassword.PlaceholderText = "PASSWORD";
             textPassword.Size = new Size(171, 23);
-            textPassword.TabIndex = 10;
+            textPassword.TabIndex = 3;
             // 
             // buttonBack
             // 
@@ -94,7 +96,7 @@
             buttonBack.Location = new Point(465, 435);
             buttonBack.Name = "buttonBack";
             buttonBack.Size = new Size(171, 46);
-            buttonBack.TabIndex = 11;
+            buttonBack.TabIndex = 5;
             buttonBack.Text = "BACK";
             buttonBack.UseVisualStyleBackColor = false;
             buttonBack.Click += buttonBack_Click;
@@ -102,10 +104,11 @@
             // textEmail
             // 
             textEmail.Location = new Point(465, 239);
+            textEmail.MaxLength = 40;
             textEmail.Name = "textEmail";
             textEmail.PlaceholderText = "EMAIL";
             textEmail.Size = new Size(171, 23);
-            textEmail.TabIndex = 12;
+            textEmail.TabIndex = 2;
             // 
             // Register
             // 

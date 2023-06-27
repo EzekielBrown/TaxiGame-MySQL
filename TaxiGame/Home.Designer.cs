@@ -64,7 +64,7 @@
             buttonNewGame.Location = new Point(465, 200);
             buttonNewGame.Name = "buttonNewGame";
             buttonNewGame.Size = new Size(171, 46);
-            buttonNewGame.TabIndex = 9;
+            buttonNewGame.TabIndex = 1;
             buttonNewGame.Text = "NEW GAME";
             buttonNewGame.UseVisualStyleBackColor = false;
             buttonNewGame.Click += buttonNewGame_Click;
@@ -81,7 +81,7 @@
             buttonLogOut.Location = new Point(465, 437);
             buttonLogOut.Name = "buttonLogOut";
             buttonLogOut.Size = new Size(171, 46);
-            buttonLogOut.TabIndex = 10;
+            buttonLogOut.TabIndex = 4;
             buttonLogOut.Text = "LOG OUT";
             buttonLogOut.UseVisualStyleBackColor = false;
             buttonLogOut.Click += buttonLogOut_Click;
@@ -98,7 +98,7 @@
             buttonAdmin.Location = new Point(465, 385);
             buttonAdmin.Name = "buttonAdmin";
             buttonAdmin.Size = new Size(171, 46);
-            buttonAdmin.TabIndex = 11;
+            buttonAdmin.TabIndex = 3;
             buttonAdmin.Text = "ADMIN";
             buttonAdmin.UseVisualStyleBackColor = false;
             buttonAdmin.Click += buttonAdmin_Click;
@@ -165,7 +165,7 @@
             buttonJoin.Location = new Point(465, 252);
             buttonJoin.Name = "buttonJoin";
             buttonJoin.Size = new Size(171, 46);
-            buttonJoin.TabIndex = 16;
+            buttonJoin.TabIndex = 2;
             buttonJoin.Text = "JOIN GAME";
             buttonJoin.UseVisualStyleBackColor = false;
             buttonJoin.Click += buttonJoin_Click;

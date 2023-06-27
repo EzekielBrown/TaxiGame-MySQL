@@ -21,14 +21,14 @@ namespace TaxiGame
 
             OnlinePlayers();
             GameList();
-            
+
         }
 
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
             int newGameID = dataAccess.Create_Game(currentUsername);
 
-            if (newGameID > 0) 
+            if (newGameID > 0)
             {
                 MessageBox.Show("New game created successfully.");
 
@@ -161,7 +161,7 @@ namespace TaxiGame
                         if (result)
                         {
                             MessageBox.Show("The game has been successfully deleted.");
-                            GameList(); 
+                            GameList();
                         }
                         else
                         {
