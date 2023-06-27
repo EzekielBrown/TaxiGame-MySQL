@@ -1,4 +1,7 @@
-﻿using static TaxiGame.DataAccess;
+﻿using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+
+using static TaxiGame.DataAccess;
 
 namespace TaxiGame
 {
@@ -109,8 +112,6 @@ namespace TaxiGame
             }
         }
 
-
-
         private void buttonUp_Click(object sender, EventArgs e)
         {
             MovePlayer(0, -1);
@@ -139,20 +140,55 @@ namespace TaxiGame
 
             if (currentTile == null) return;
 
+            // Find the new tile the player is attempting to move to
+            Tile newTile = tiles.FirstOrDefault(t => t.Column == currentTile.Column + deltaX && t.Row == currentTile.Row + deltaY);
+
+            // Check if the new tile's ItemID is 4 or 5, if so, show message and end the game
+            if (newTile != null && (newTile.ItemID == 4 || newTile.ItemID == 5))
+            {
+                // Show message box
+                MessageBox.Show("You have crashed. Game over", "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                // End the game in the database
+                dataAccess.EndGame(gameID);
+
+                // Send the user back to the home screen
+                this.Hide();
+                _home.Show();
+                return;
+            }
+
             int newTileID = tiles.FirstOrDefault(t => t.Column == currentTile.Column + deltaX && t.Row == currentTile.Row + deltaY)?.TileID ?? playerCurrentTileID;
 
-            // Update player position
-            if (newTileID != playerCurrentTileID)
+            // Check if the player is moving onto a tile with TileID 4 or 5
+            if (newTileID == 4 || newTileID == 5)
             {
-                string result = dataAccess.User_Movement(username, newTileID);
+                // Display a message saying "You have crashed. Game over"
+                MessageBox.Show("You have crashed. Game over");
 
-                // Refresh the game board to reflect player's new position
-                panelGame.Controls.Clear();
-                CreateGameboard();
+                // End the game by deleting it from the database
+                dataAccess.EndGame(gameID);
+
+                // Send the player back to the home
+                this.Hide();
+                _home.Show();
+            }
+            else
+            {
+                // Update player position
+                if (newTileID != playerCurrentTileID)
+                {
+                    string result = dataAccess.User_Movement(username, newTileID);
+
+                    // Refresh the game board to reflect player's new position
+                    panelGame.Controls.Clear();
+                    CreateGameboard();
+                }
             }
         }
 
-        private void Gameboard_KeyDown(object sender, KeyEventArgs e)
+
+            private void Gameboard_KeyDown(object sender, KeyEventArgs e)
         {
             // Check which key is pressed and call the appropriate button's Click event handler
             switch (e.KeyCode)

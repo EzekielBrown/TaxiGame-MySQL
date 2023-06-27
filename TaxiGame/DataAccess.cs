@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Data;
+using System.Windows.Forms;
 
 namespace TaxiGame
 {
@@ -428,6 +429,30 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
+        public void EndGame(int gameID)
+        {
+            // SQL query to delete the game record from tblGame
+            string query = "DELETE FROM tblGame WHERE gameID = @GameID";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    // Add the parameter and its value to the command
+                    command.Parameters.AddWithValue("@GameID", gameID);
+
+                    // Open the connection
+                    connection.Open();
+
+                    // Execute the query
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+
 
 
         public string Chat_Message(string pUsername, string pMessage) 
