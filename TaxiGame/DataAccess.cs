@@ -619,9 +619,6 @@ namespace TaxiGame
             return 0;
         }
 
-
-
-
         public void SetTileItemID(int tileID, int itemID)
         {
             string query = "UPDATE tblTile SET itemID = @ItemID WHERE tileID = @TileID";

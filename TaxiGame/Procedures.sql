@@ -737,7 +737,7 @@ BEGIN
     COMMIT;
 
     IF ROW_COUNT() > 0 THEN
-        SELECT CONCAT('User Deleted') AS message;
+        SELECT 'User Deleted' AS message;
     ELSE
         SELECT 'User not found' AS message;
     END IF;

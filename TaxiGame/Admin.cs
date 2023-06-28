@@ -73,7 +73,7 @@ namespace TaxiGame
                 }
                 else if (result == "User not found")
                 {
-                    MessageBox.Show("User Deleted");
+                    MessageBox.Show("User not found.");
                 }
             }
             else
