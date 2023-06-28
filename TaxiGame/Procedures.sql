@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS tblTile;
 DROP TABLE IF EXISTS tblGame;
 DROP TABLE IF EXISTS tblInventory;
 DROP TABLE IF EXISTS tblItem;
+drop table if exists tblUserGame;
 
 
 -- Create Tables
@@ -28,6 +29,7 @@ CREATE TABLE tblUser (
     isAdmin boolean default false,
     isLocked bit default 0,
     numLoginAttempts int(1) default 0,
+    lockedUntil datetime,
     isOnline bit default 0,
     score int(10) default 0
 );
@@ -66,7 +68,7 @@ CREATE TABLE tblInventory
 (
     inventoryID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     userID INT NOT NULL,
-    itemID INT, -- This column was missing
+    itemID INT,
     passengerCount INT NOT NULL DEFAULT 0,
     CONSTRAINT fk_userID FOREIGN KEY (userID) REFERENCES tblUser(userID),
     CONSTRAINT chk_passengerCount CHECK (passengerCount >= 0 AND passengerCount <= 3)
@@ -80,6 +82,15 @@ CREATE TABLE tblChat
 	userID INT,
 	message VARCHAR(255)
 );
+
+CREATE TABLE tblUserGame (
+    userID INT,
+    gameID INT,
+    PRIMARY KEY (userID, gameID),
+    FOREIGN KEY (userID) REFERENCES tblUser(userID),
+    FOREIGN KEY (gameID) REFERENCES tblGame(gameID) ON DELETE CASCADE
+);
+
 
 -- Foreign Keys
 
@@ -296,41 +307,54 @@ DROP PROCEDURE IF EXISTS Log_In;
 DELIMITER //
 CREATE PROCEDURE Log_In(IN pUsername VARCHAR(20), IN pPassword VARCHAR(30))
 BEGIN
-    DECLARE pPassword VARCHAR(30);
+    DECLARE dbPassword VARCHAR(30);
     DECLARE pUserID INT(10);
     DECLARE login_attempts INT(1);
     DECLARE locked BIT;
+    DECLARE lockedUntil DATETIME;
 
-    SELECT userID, password, numLoginAttempts, isLocked INTO pUserID, pPassword, login_attempts, locked 
+    SELECT userID, password, numLoginAttempts, isLocked, lockedUntil INTO pUserID, dbPassword, login_attempts, locked, lockedUntil
     FROM tblUser 
     WHERE username = pUsername;
 
-   -- Lock user out if login attempt exceeds 5
-    IF pPassword = pPassword AND locked = 0 THEN
-        UPDATE tblUser 
-        SET isOnline = 1, numLoginAttempts = 0
-        WHERE userID = pUserID;
-        SELECT 'Login Successful' AS message;
-    ELSEIF locked = 1 THEN
+    -- Check if the user is allowed to login
+    IF locked = 1 AND NOW() < lockedUntil THEN
         SELECT 'Account Locked' AS message;
     ELSE
-        SET login_attempts = login_attempts + 1;
-        UPDATE tblUser 
-        SET numLoginAttempts = login_attempts
-        WHERE userID = pUserID;
-        
-        IF login_attempts >= 5 THEN
-            UPDATE tblUser 
-            SET isLocked = 1
+        -- Unlock the account if the lock duration has passed
+        IF locked = 1 THEN
+            UPDATE tblUser
+            SET isLocked = 0, numLoginAttempts = 0
             WHERE userID = pUserID;
-                      
-            SELECT 'Account Locked' AS message;
+        END IF;
+
+        -- Check password
+        IF dbPassword = pPassword THEN
+            UPDATE tblUser 
+            SET isOnline = 1, numLoginAttempts = 0
+            WHERE userID = pUserID;
+            SELECT 'Login Successful' AS message;
         ELSE
-            SELECT 'Login Failed' AS message;
+            SET login_attempts = login_attempts + 1;
+            UPDATE tblUser 
+            SET numLoginAttempts = login_attempts
+            WHERE userID = pUserID;
+            
+            -- Lock account if login attempts exceed 5
+            IF login_attempts >= 5 THEN
+                UPDATE tblUser 
+                SET isLocked = 1, lockedUntil = DATE_ADD(NOW(), INTERVAL 5 MINUTE)
+                WHERE userID = pUserID;
+                      
+                SELECT 'Account Locked' AS message;
+            ELSE
+                SELECT 'Login Failed' AS message;
+            END IF;
         END IF;
     END IF;
 END //
 DELIMITER ;
+
 
 
 -- New User Procedure
@@ -338,23 +362,27 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS New_User;
 
 DELIMITER //
-CREATE PROCEDURE New_User(in pUsername VARCHAR(20), in pPassword VARCHAR(30), in pEmail varchar(50))
+CREATE PROCEDURE New_User(IN pUsername VARCHAR(20), IN pPassword VARCHAR(30), IN pEmail VARCHAR(50))
 BEGIN
-  If Exists (Select * 
-     From tblUser
-     Where username = pUsername) 
-     Then
-		Begin
-			Select 'User Exists' As Message;
-		End;
-	Else
-		Insert Into tblUser(username, password ,email)
-        Values
-			(pUsername,pPassword,pEmail);
-            Select 'Login Success' As Message;
-	End If;      
-End //
+    DECLARE lastUserID INT;
+    
+    IF EXISTS (SELECT * FROM tblUser WHERE username = pUsername) THEN
+        SELECT 'User Exists' AS Message;
+    ELSE
+        INSERT INTO tblUser(username, password, email)
+        VALUES (pUsername, pPassword, pEmail);
+        
+        -- Get the ID of the newly inserted user
+        SET lastUserID = LAST_INSERT_ID();
+        
+        -- Insert an entry into the tblInventory for the new user
+        INSERT INTO tblInventory (userID) VALUES (lastUserID);
+        
+        SELECT 'Login Success' AS Message;
+    END IF;
+END //
 DELIMITER ;
+
 
 
 -- Log Out Procedure
@@ -435,21 +463,34 @@ DELIMITER //
 CREATE PROCEDURE Join_Game(IN pGameID INT, IN pUserID INT)
 BEGIN
     DECLARE gameExists INT;
-    
+    DECLARE userGameExists INT;
+
     -- Check if the game exists
     SELECT COUNT(*) INTO gameExists
     FROM tblGame
     WHERE gameID = pGameID;
-    
+
+    -- Check if the user is already in the game
+    SELECT COUNT(*) INTO userGameExists
+    FROM tblUserGame
+    WHERE gameID = pGameID AND userID = pUserID;
+
     IF gameExists > 0 THEN
-        INSERT INTO tblUserGame (userID, gameID)
-        VALUES (pUserID, pGameID);
-        
-        SELECT 'Game Joined' AS Message;
+        IF userGameExists = 0 THEN
+            -- User is not in the game, so insert the record
+            INSERT INTO tblUserGame (userID, gameID)
+            VALUES (pUserID, pGameID);
+
+            SELECT 'Game Joined' AS Message;
+        ELSE
+            -- User is already in the game
+            SELECT 'User is already in the game' AS Message;
+        END IF;
     ELSE
         SELECT 'Game does not exist' AS Message;
     END IF;
-END //
+END
+ //
 
 
 
@@ -462,7 +503,6 @@ DELIMITER //
 
 CREATE PROCEDURE User_Movement(IN p_Username VARCHAR(20), IN p_TileID INT)
 BEGIN
-    -- Update the user's position in tblGame based on the username and new tile ID
     UPDATE tblGame
     INNER JOIN tblUser ON tblGame.userID = tblUser.userID
     SET tblGame.tileID = p_TileID
@@ -521,21 +561,30 @@ DELIMITER ;
 -- Admin Add User Procedure
 
 DROP PROCEDURE IF EXISTS Admin_New_User;
-DELIMITER //
 
-CREATE PROCEDURE Admin_New_User(In pUsername VARCHAR(20), In pPassword VARCHAR(30), In pEmail varchar(50))
+DELIMITER //
+CREATE PROCEDURE Admin_New_User(In pUsername VARCHAR(20), In pPassword VARCHAR(30), In pEmail varchar(50), OUT pMessage VARCHAR(255))
 BEGIN
-	IF EXISTS (SELECT username FROM tblUser WHERE username = pUsername) THEN
-		SELECT 'Username already exists' AS message;
-	ELSEIF EXISTS (SELECT email FROM tblUser WHERE email = pEmail) THEN
-		SELECT 'Email already exists' AS message;
-	ELSE
-		INSERT INTO user (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
-		VALUES (pUsername, pPassword, pEmail, false, 0, 0, 0, 0);
-		SELECT 'User added successfully' AS message;
-	END IF;
+    IF EXISTS (SELECT username FROM tblUser WHERE username = pUsername) THEN
+        SET pMessage = 'Username already exists';
+    ELSEIF EXISTS (SELECT email FROM tblUser WHERE email = pEmail) THEN
+        SET pMessage = 'Email already exists';
+    ELSE
+        -- Insert user into tblUser
+        INSERT INTO tblUser (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
+        VALUES (pUsername, pPassword, pEmail, false, 0, 0, 0, 0);
+
+        -- Get the ID of the newly inserted user
+        SET @lastUserID = LAST_INSERT_ID();
+
+        -- Insert an entry into the tblInventory for the new user
+        INSERT INTO tblInventory (userID) VALUES (@lastUserID);
+        
+        SET pMessage = 'User added successfully';
+    END IF;
 END //
 DELIMITER ;
+
 
 -- Admin Delete User Procedure
 
