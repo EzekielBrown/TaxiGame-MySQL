@@ -37,29 +37,29 @@ CREATE TABLE tblUser (
 
 CREATE TABLE tblItem
 (
-	itemID int(10) primary key not null auto_increment,
-	name varchar(30) null,
-	description varchar(255) null,
-	isNPC bit not null,
-	value int(10) null
+    itemID int(10) primary key not null auto_increment,
+    name varchar(30) null,
+    description varchar(255) null,
+    isNPC bit not null,
+    value int(10) null
 );
 
 CREATE TABLE tblTile
 (
-	tileID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	`column` INT NOT NULL,
-	`row` INT NOT NULL,
-	homeTile TINYINT(1),
-	DropOffTile TINYINT(1),
-	itemID INT
+    tileID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `column` INT NOT NULL,
+    `row` INT NOT NULL,
+    homeTile TINYINT(1),
+    DropOffTile TINYINT(1),
+    itemID INT
 );
 
 
 CREATE TABLE tblGame
 (
-	gameID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	tileID INT,
-	userID INT
+    gameID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    tileID INT,
+    userID INT
 );
 
 
@@ -70,7 +70,7 @@ CREATE TABLE tblInventory
     userID INT NOT NULL,
     itemID INT,
     passengerCount INT NOT NULL DEFAULT 0,
-    CONSTRAINT fk_userID FOREIGN KEY (userID) REFERENCES tblUser(userID),
+    CONSTRAINT fk_userID FOREIGN KEY (userID) REFERENCES tblUser(userID) ON DELETE CASCADE,
     CONSTRAINT chk_passengerCount CHECK (passengerCount >= 0 AND passengerCount <= 3)
 );
 
@@ -78,9 +78,9 @@ CREATE TABLE tblInventory
 
 CREATE TABLE tblChat
 (
-	chatID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	userID INT,
-	message VARCHAR(255)
+    chatID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    userID INT,
+    message VARCHAR(255)
 );
 
 CREATE TABLE tblUserGame (
@@ -90,6 +90,7 @@ CREATE TABLE tblUserGame (
     FOREIGN KEY (userID) REFERENCES tblUser(userID),
     FOREIGN KEY (gameID) REFERENCES tblGame(gameID) ON DELETE CASCADE
 );
+
 
 
 -- Foreign Keys
