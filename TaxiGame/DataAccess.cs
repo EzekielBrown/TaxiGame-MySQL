@@ -122,8 +122,7 @@ namespace TaxiGame
                     DateTime? lockedUntil = aDataSet.Tables[0].Rows[0].Field<DateTime?>("lockedUntil");
                     isAdmin = aDataSet.Tables[0].Rows[0].Field<bool>("isAdmin");
 
-                    // Check if the lock duration has passed
-                    if (isLocked == 1 && lockedUntil.HasValue && DateTime.Now > lockedUntil.Value)
+                    if (isLocked == 1 && lockedUntil.HasValue && DateTime.Now > lockedUntil.Value) // checks if lock out time as passed
                     {
                         UnlockAccount(connection, aDataSet.Tables[0].Rows[0].Field<int>("userID"));
                         isLocked = 0;
@@ -270,7 +269,7 @@ namespace TaxiGame
                 aGameID.Direction = ParameterDirection.Output;
                 createGameParams.Add(aGameID);
 
-                mySqlConnection.Open(); // Open connection
+                mySqlConnection.Open(); 
 
                 MySqlHelper.ExecuteNonQuery(mySqlConnection, "CALL Create_Game(@pUsername, @pGameID)", createGameParams.ToArray());
 
@@ -284,7 +283,7 @@ namespace TaxiGame
             {
                 if (mySqlConnection.State == ConnectionState.Open)
                 {
-                    mySqlConnection.Close(); // Close connection
+                    mySqlConnection.Close();
                 }
             }
         }
@@ -444,28 +443,18 @@ namespace TaxiGame
 
         public void EndGame(int gameID)
         {
-            // SQL query to delete the game record from tblGame
-            string query = "DELETE FROM tblGame WHERE gameID = @GameID";
+            string query = "DELETE FROM tblGame WHERE gameID = @GameID"; // deletes game 
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
-                    // Add the parameter and its value to the command
                     command.Parameters.AddWithValue("@GameID", gameID);
-
-                    // Open the connection
                     connection.Open();
-
-                    // Execute the query
                     command.ExecuteNonQuery();
                 }
             }
         }
-
-
-
-
 
         public string Chat_Message(string pUsername, string pMessage) 
         {
@@ -483,6 +472,7 @@ namespace TaxiGame
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
         }
+
         public string Admin_Edit_User(string pUsername, string pPassword, string pEmail, bool pIsLocked, bool pIsAdmin)
         {
             List<MySqlParameter> adminEditUserParams = new List<MySqlParameter>();
@@ -564,7 +554,6 @@ namespace TaxiGame
                 user.Username = aDataSet.Tables[0].Rows[0].Field<string>("Username");
                 user.Password = aDataSet.Tables[0].Rows[0].Field<string>("Password");
                 user.Email = aDataSet.Tables[0].Rows[0].Field<string>("Email");
-                // Set other user properties
 
                 return user;
             }
@@ -764,9 +753,5 @@ namespace TaxiGame
                 }
             }
         }
-
     }
-
-
-
 }

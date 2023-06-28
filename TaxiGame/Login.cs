@@ -31,7 +31,7 @@ namespace TaxiGame
             }
             else if (result == "Account Locked")
             {
-                MessageBox.Show("Your account is locked. Please try again later.");
+                MessageBox.Show("Your account is locked. Please try again in 5 minutes.");
             }
             else if (result == "Incorrect Password")
             {

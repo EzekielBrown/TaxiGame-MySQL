@@ -110,16 +110,14 @@ namespace TaxiGame
 
         private void buttonJoin_Click(object sender, EventArgs e)
         {
-            // Get the selected game
             string selectedGame = listBoxGames.SelectedItem as string;
 
             if (selectedGame != null)
             {
-                // Extract the gameID from the selectedGame string
                 int gameID;
                 if (int.TryParse(selectedGame.Split('-')[0].Trim(), out gameID))
                 {
-                    int userID = 1; // Replace with the actual user ID of the logged-in user
+                    int userID = 1; // remember to fix
                     string result = dataAccess.Join_Game(gameID, userID);
 
                     if (result == "Game Joined")

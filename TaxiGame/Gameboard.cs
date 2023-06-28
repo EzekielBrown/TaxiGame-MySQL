@@ -37,7 +37,7 @@ namespace TaxiGame
             score.Text = $"SCORE: {userScore}";
 
             int numberOfPassengers = dataAccess.GetUserPassengers(username);
-            passengers.Text = $"CURRENT PASSENGERS: {numberOfPassengers}";
+            passengers.Text = $"CURRENT PASSENGERS: {numberOfPassengers} / 3";
 
 
             List<Tile> tiles = dataAccess.GetTiles();
@@ -143,7 +143,7 @@ namespace TaxiGame
             {
                 string result = dataAccess.User_Movement(username, newTileID);
 
-                if (hasPassenger && newTileID == 19) // if players are on drop off tile
+                if (hasPassenger && newTileID == 19) // if player are on drop off tile
                 {
                     int numberOfPassengers = dataAccess.GetUserPassengers(username); // get the number of passengers
                     dataAccess.IncrementPlayerScore(username, 100 * numberOfPassengers); // increase score by 100 per passenger

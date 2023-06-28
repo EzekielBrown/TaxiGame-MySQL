@@ -71,7 +71,7 @@
             score.BackColor = Color.Transparent;
             score.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             score.ForeColor = Color.FromArgb(245, 215, 166);
-            score.Location = new Point(268, 71);
+            score.Location = new Point(158, 71);
             score.Name = "score";
             score.Size = new Size(18, 20);
             score.TabIndex = 15;
@@ -151,7 +151,7 @@
             passengers.BackColor = Color.Transparent;
             passengers.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             passengers.ForeColor = Color.FromArgb(245, 215, 166);
-            passengers.Location = new Point(268, 97);
+            passengers.Location = new Point(158, 97);
             passengers.Name = "passengers";
             passengers.Size = new Size(18, 20);
             passengers.TabIndex = 22;

@@ -373,10 +373,8 @@ BEGIN
         INSERT INTO tblUser(username, password, email)
         VALUES (pUsername, pPassword, pEmail);
         
-        -- Get the ID of the newly inserted user
         SET lastUserID = LAST_INSERT_ID();
         
-        -- Insert an entry into the tblInventory for the new user
         INSERT INTO tblInventory (userID) VALUES (lastUserID);
         
         SELECT 'Login Success' AS Message;
@@ -466,25 +464,21 @@ BEGIN
     DECLARE gameExists INT;
     DECLARE userGameExists INT;
 
-    -- Check if the game exists
     SELECT COUNT(*) INTO gameExists
     FROM tblGame
     WHERE gameID = pGameID;
 
-    -- Check if the user is already in the game
     SELECT COUNT(*) INTO userGameExists
     FROM tblUserGame
     WHERE gameID = pGameID AND userID = pUserID;
 
     IF gameExists > 0 THEN
         IF userGameExists = 0 THEN
-            -- User is not in the game, so insert the record
             INSERT INTO tblUserGame (userID, gameID)
             VALUES (pUserID, pGameID);
 
             SELECT 'Game Joined' AS Message;
         ELSE
-            -- User is already in the game
             SELECT 'User is already in the game' AS Message;
         END IF;
     ELSE
@@ -571,14 +565,13 @@ BEGIN
     ELSEIF EXISTS (SELECT email FROM tblUser WHERE email = pEmail) THEN
         SET pMessage = 'Email already exists';
     ELSE
-        -- Insert user into tblUser
+
         INSERT INTO tblUser (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
         VALUES (pUsername, pPassword, pEmail, false, 0, 0, 0, 0);
 
-        -- Get the ID of the newly inserted user
         SET @lastUserID = LAST_INSERT_ID();
 
-        -- Insert an entry into the tblInventory for the new user
+
         INSERT INTO tblInventory (userID) VALUES (@lastUserID);
         
         SET pMessage = 'User added successfully';
