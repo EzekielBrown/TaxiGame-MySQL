@@ -7,36 +7,50 @@ namespace TaxiGame
     {
         public string Admin_Edit_User(string pUsername, string pPassword, string pEmail, bool pIsLocked, bool pIsAdmin)
         {
-            List<MySqlParameter> adminEditUserParams = new List<MySqlParameter>();
+            try
+            {
+                List<MySqlParameter> adminEditUserParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@pUsername", MySqlDbType.VarChar, 20);
-            aUsername.Value = pUsername;
-            adminEditUserParams.Add(aUsername);
+                MySqlParameter aUsername = new MySqlParameter("@pUsername", MySqlDbType.VarChar, 20);
+                aUsername.Value = pUsername;
+                adminEditUserParams.Add(aUsername);
 
-            MySqlParameter aPassword = new MySqlParameter("@pPassword", MySqlDbType.VarChar, 30);
-            aPassword.Value = pPassword;
-            adminEditUserParams.Add(aPassword);
+                MySqlParameter aPassword = new MySqlParameter("@pPassword", MySqlDbType.VarChar, 30);
+                aPassword.Value = pPassword;
+                adminEditUserParams.Add(aPassword);
 
-            MySqlParameter aEmail = new MySqlParameter("@pEmail", MySqlDbType.VarChar, 50);
-            aEmail.Value = pEmail;
-            adminEditUserParams.Add(aEmail);
+                MySqlParameter aEmail = new MySqlParameter("@pEmail", MySqlDbType.VarChar, 50);
+                aEmail.Value = pEmail;
+                adminEditUserParams.Add(aEmail);
 
-            MySqlParameter aIsLocked = new MySqlParameter("@pIsLocked", MySqlDbType.Bit);
-            aIsLocked.Value = pIsLocked;
-            adminEditUserParams.Add(aIsLocked);
+                MySqlParameter aIsLocked = new MySqlParameter("@pIsLocked", MySqlDbType.Bit);
+                aIsLocked.Value = pIsLocked;
+                adminEditUserParams.Add(aIsLocked);
 
-            MySqlParameter aIsAdmin = new MySqlParameter("@pIsAdmin", MySqlDbType.Bit);
-            aIsAdmin.Value = pIsAdmin;
-            adminEditUserParams.Add(aIsAdmin);
+                MySqlParameter aIsAdmin = new MySqlParameter("@pIsAdmin", MySqlDbType.Bit);
+                aIsAdmin.Value = pIsAdmin;
+                adminEditUserParams.Add(aIsAdmin);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Admin_Edit_User(@pUsername, @pPassword, @pEmail, @pIsLocked, @pIsAdmin)", adminEditUserParams.ToArray());
+                var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Admin_Edit_User(@pUsername, @pPassword, @pEmail, @pIsLocked, @pIsAdmin)", adminEditUserParams.ToArray());
 
-            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+                return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+            }
+            catch (MySqlException ex)
+            {
+                return "Database Error: " + ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
+
 
         public string Admin_New_User(string pUsername, string pPassword, string pEmail)
         {
-            using (var connection = new MySqlConnection(DataAccess.ConnectionString))
+            try
+            {
+                using (var connection = new MySqlConnection(DataAccess.ConnectionString))
             {
                 connection.Open();
                 var cmd = connection.CreateCommand();
@@ -54,11 +68,22 @@ namespace TaxiGame
 
                 return pMessage.Value.ToString();
             }
+            }
+            catch (MySqlException ex)
+            {
+                return "Database Error: " + ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
 
         public string Admin_Delete_User(int userID)
         {
-            List<MySqlParameter> adminDeleteUserParams = new List<MySqlParameter>();
+            try
+            {
+                List<MySqlParameter> adminDeleteUserParams = new List<MySqlParameter>();
 
             MySqlParameter aUserID = new MySqlParameter("@pUserID", MySqlDbType.Int32);
             aUserID.Value = userID;
@@ -67,31 +92,49 @@ namespace TaxiGame
             var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Admin_Delete_User(@pUserID)", adminDeleteUserParams.ToArray());
 
             return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+            }
+            catch (MySqlException ex)
+            {
+                return "Database Error: " + ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
 
 
         public PlayerInDB GetUserData(int userID)
         {
-            List<MySqlParameter> getUserParams = new List<MySqlParameter>();
-
-            MySqlParameter aUserID = new MySqlParameter("@UserID", MySqlDbType.Int32);
-            aUserID.Value = userID;
-            getUserParams.Add(aUserID);
-
-            var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Get_User_Data(@UserID)", getUserParams.ToArray());
-
-            if (aDataSet.Tables[0].Rows.Count > 0)
+            try
             {
-                PlayerInDB user = new PlayerInDB();
-                user.Username = aDataSet.Tables[0].Rows[0].Field<string>("Username");
-                user.Password = aDataSet.Tables[0].Rows[0].Field<string>("Password");
-                user.Email = aDataSet.Tables[0].Rows[0].Field<string>("Email");
+                List<MySqlParameter> getUserParams = new List<MySqlParameter>();
 
-                return user;
+                MySqlParameter aUserID = new MySqlParameter("@UserID", MySqlDbType.Int32);
+                aUserID.Value = userID;
+                getUserParams.Add(aUserID);
+
+                var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Get_User_Data(@UserID)", getUserParams.ToArray());
+
+                if (aDataSet.Tables[0].Rows.Count > 0)
+                {
+                    PlayerInDB user = new PlayerInDB();
+                    user.Username = aDataSet.Tables[0].Rows[0].Field<string>("Username");
+                    user.Password = aDataSet.Tables[0].Rows[0].Field<string>("Password");
+                    user.Email = aDataSet.Tables[0].Rows[0].Field<string>("Email");
+
+                    return user;
+                }
+            }
+            catch (MySqlException ex)
+            {
+            }
+            catch (Exception ex)
+            {
             }
 
             return null;
         }
-        
+
     }
 }

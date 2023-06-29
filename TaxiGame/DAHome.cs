@@ -12,47 +12,44 @@ namespace TaxiGame
     {
         public string Log_Out(string pUsername)
         {
-            List<MySqlParameter> logOutParams = new List<MySqlParameter>();
+            try
+            {
+                List<MySqlParameter> logOutParams = new List<MySqlParameter>();
 
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
-            aUsername.Value = pUsername;
-            logOutParams.Add(aUsername);
+                MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
+                aUsername.Value = pUsername;
+                logOutParams.Add(aUsername);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Log_Out(@Username)", logOutParams.ToArray());
+                var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Log_Out(@Username)", logOutParams.ToArray());
 
-            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+                return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
 
         public string Delete_User(string pUsername)
         {
-            List<MySqlParameter> deleteUserParams = new List<MySqlParameter>();
-
-            MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
-            aUsername.Value = pUsername;
-            deleteUserParams.Add(aUsername);
-
-            var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "Call delete_User(@Username)", deleteUserParams.ToArray());
-
-            return aDataSet.Tables[0].Rows[0].Field<String>("Message");
-        }
-        public List<PlayerInDB> Active_User_List()
-        {
-            List<PlayerInDB> activePlayers = new List<PlayerInDB>();
-
-            List<MySqlParameter> activePlayersParams = new List<MySqlParameter>();
-
-            var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Active_User_List()", activePlayersParams.ToArray());
-
-            foreach (DataRow row in aDataSet.Tables[0].Rows)
+            try
             {
-                PlayerInDB player = new PlayerInDB();
-                player.Username = row["username"].ToString();
+                List<MySqlParameter> deleteUserParams = new List<MySqlParameter>();
 
-                activePlayers.Add(player);
+                MySqlParameter aUsername = new MySqlParameter("@Username", MySqlDbType.VarChar, 20);
+                aUsername.Value = pUsername;
+                deleteUserParams.Add(aUsername);
+
+                var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "Call delete_User(@Username)", deleteUserParams.ToArray());
+
+                return aDataSet.Tables[0].Rows[0].Field<string>("Message");
             }
-
-            return activePlayers;
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
+
         public int Create_Game(string pUsername)
         {
             try
@@ -85,6 +82,7 @@ namespace TaxiGame
                 }
             }
         }
+
         public List<GameInDB> Game_List()
         {
             List<GameInDB> games = new List<GameInDB>();
@@ -112,38 +110,79 @@ namespace TaxiGame
             return games;
         }
 
+        public List<PlayerInDB> Active_User_List()
+        {
+            try
+            {
+                List<PlayerInDB> activePlayers = new List<PlayerInDB>();
+                List<MySqlParameter> activePlayersParams = new List<MySqlParameter>();
+
+                var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Active_User_List()", activePlayersParams.ToArray());
+
+                foreach (DataRow row in aDataSet.Tables[0].Rows)
+                {
+                    PlayerInDB player = new PlayerInDB();
+                    player.Username = row["username"].ToString();
+
+                    activePlayers.Add(player);
+                }
+
+                return activePlayers;
+            }
+            catch (Exception ex)
+            {
+                return new List<PlayerInDB>(); // return empty list
+            }
+        }
+
         public string Join_Game(int gameID, int userID)
         {
-            List<MySqlParameter> joinGameParams = new List<MySqlParameter>();
+            try
+            {
+                List<MySqlParameter> joinGameParams = new List<MySqlParameter>();
 
-            MySqlParameter aGameID = new MySqlParameter("@pGameID", MySqlDbType.Int32);
-            aGameID.Value = gameID;
-            joinGameParams.Add(aGameID);
+                MySqlParameter aGameID = new MySqlParameter("@pGameID", MySqlDbType.Int32);
+                aGameID.Value = gameID;
+                joinGameParams.Add(aGameID);
 
-            MySqlParameter aUserID = new MySqlParameter("@pUserID", MySqlDbType.Int32);
-            aUserID.Value = userID;
-            joinGameParams.Add(aUserID);
+                MySqlParameter aUserID = new MySqlParameter("@pUserID", MySqlDbType.Int32);
+                aUserID.Value = userID;
+                joinGameParams.Add(aUserID);
 
-            var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Join_Game(@pGameID, @pUserID)", joinGameParams.ToArray());
+                var aDataSet = MySqlHelper.ExecuteDataset(DataAccess.MySqlConnection, "CALL Join_Game(@pGameID, @pUserID)", joinGameParams.ToArray());
 
-            return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+                return aDataSet.Tables[0].Rows[0].Field<string>("Message");
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
+
         public bool KillGame(int gameID)
         {
-            using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
+            try
             {
-                connection.Open();
-
-                string query = "DELETE FROM tblGame WHERE gameID = @gameID";
-
-                using (MySqlCommand command = new MySqlCommand(query, connection))
+                using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    command.Parameters.AddWithValue("@gameID", gameID);
+                    connection.Open();
 
-                    int rowsAffected = command.ExecuteNonQuery();
-                    return rowsAffected > 0;
+                    string query = "DELETE FROM tblGame WHERE gameID = @gameID";
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@gameID", gameID);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return rowsAffected > 0;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }
 }
+
