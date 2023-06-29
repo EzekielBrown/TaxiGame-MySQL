@@ -327,8 +327,9 @@ BEGIN
     WHERE username = pUsername;
 
     -- Check if the user is allowed to login
-    IF locked = 1 AND NOW() < lockedUntil then 
+    IF locked = 1 AND NOW() < lockedUntil THEN 
         SELECT 'Account Locked' AS message;
+        COMMIT;
     ELSE
         -- Unlock the account if the lock duration has passed
         IF locked = 1 THEN
@@ -350,7 +351,7 @@ BEGIN
             UPDATE tblUser 
             SET numLoginAttempts = login_attempts
             WHERE userID = pUserID;
-            
+
             -- Lock account if login attempts exceed 5
             IF login_attempts >= 5 THEN
                 UPDATE tblUser 
@@ -359,7 +360,6 @@ BEGIN
                 COMMIT;      
                 SELECT 'Account Locked' AS message;
             ELSE
-
                 COMMIT;
                 SELECT 'Login Failed' AS message;
             END IF;
@@ -367,8 +367,6 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-
-
 
 
 -- New User Procedure
@@ -379,43 +377,38 @@ DELIMITER //
 CREATE PROCEDURE New_User(IN pUsername VARCHAR(20), IN pPassword VARCHAR(30), IN pEmail VARCHAR(50))
 BEGIN
     DECLARE lastUserID INT;
+   
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-
         ROLLBACK;
         SELECT 'Error occurred, transaction rolled back' AS Message;
     END;
 
-
     START TRANSACTION;
 
+    -- Check if the username already exists
     IF EXISTS (SELECT * FROM tblUser WHERE username = pUsername) THEN
+        COMMIT;
         SELECT 'User Exists' AS Message;
     ELSE
+        -- Insert the new user into the tblUser table
         INSERT INTO tblUser(username, password, email)
         VALUES (pUsername, pPassword, pEmail);
-        
         SET lastUserID = LAST_INSERT_ID();
-        
         INSERT INTO tblInventory (userID) VALUES (lastUserID);
-        
         COMMIT;
-        SELECT 'Login Success' AS Message;
+        SELECT 'User Created Successfully' AS Message;
     END IF;
-
 END //
 DELIMITER ;
 
-
-
-
 -- Log Out Procedure
-
-DROP PROCEDURE IF EXISTS Log_Out;
 
 DELIMITER //
 CREATE PROCEDURE Log_Out(IN pUsername VARCHAR(20))
 BEGIN
+    DECLARE userExists INT DEFAULT 0;
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -423,23 +416,25 @@ BEGIN
     END;
 
     START TRANSACTION;
-    
-    IF EXISTS (
-        SELECT *
-        FROM tblUser
-        WHERE username = pUsername
-    ) THEN
+
+    -- Check if the user with the given username exists
+    SELECT COUNT(*) INTO userExists
+    FROM tblUser
+    WHERE username = pUsername;
+
+    -- If the user exists, set isOnline to 0
+    IF userExists > 0 THEN
         UPDATE tblUser
         SET isOnline = 0
         WHERE username = pUsername;
+        COMMIT;
+        SELECT 'Logout successful' AS Message;
+    ELSE
+        COMMIT;
+        SELECT 'Username not found' AS Message;
     END IF;
-
-    COMMIT;
-    
-    SELECT 'Logout successful' AS Message;
 END //
 DELIMITER ;
-
 
 
 -- Get Active Players Procedure
@@ -451,17 +446,13 @@ CREATE PROCEDURE Active_User_List()
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SELECT 'Error occurred, transaction rolled back' AS Message;
+        SELECT 'Error occurred' AS Message;
     END;
 
-    START TRANSACTION;
-    
+    -- Select the active users
     SELECT userID, username
     FROM tblUser
     WHERE isOnline = 1 AND isLocked = 0;
-
-    COMMIT;
 END //
 DELIMITER ;
 
@@ -474,28 +465,25 @@ DELIMITER //
 CREATE PROCEDURE Create_Game(IN pUsername VARCHAR(20), OUT pGameID INT)
 BEGIN
     DECLARE pUserID INT;
-
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         SELECT 'Error occurred, transaction rolled back' AS Message;
     END;
-
+   
     START TRANSACTION;
-
+    -- Get the userID from the tblUser table
     SELECT userID INTO pUserID
     FROM tblUser
     WHERE username = pUsername;
-
+   
+    -- Insert a new record into the tblGame table
     INSERT INTO tblGame (tileID, userID)
     VALUES (DEFAULT, pUserID);
-
     SET pGameID = LAST_INSERT_ID();
-    
     COMMIT;
 END //
 DELIMITER ;
-
 
 
 -- Get All Games Procedure
@@ -551,7 +539,7 @@ BEGIN
 
     IF gameExists > 0 THEN
         IF userGameExists = 0 THEN
-            -- User is not in the game
+            -- User is not in the game, join the game
             INSERT INTO tblUserGame (userID, gameID)
             VALUES (pUserID, pGameID);
 
@@ -560,18 +548,17 @@ BEGIN
             SELECT 'Game Joined' AS Message;
         ELSE
             -- User is already in the game
-            COMMIT;
-
+            ROLLBACK;
             SELECT 'User is already in the game' AS Message;
         END IF;
     ELSE
         -- Game does not exist
-        COMMIT;
-
+        ROLLBACK;
         SELECT 'Game does not exist' AS Message;
     END IF;
 END //
 DELIMITER ;
+
 
 
 -- Movement Procedure
@@ -581,24 +568,43 @@ DROP PROCEDURE IF EXISTS User_Movement;
 DELIMITER //
 CREATE PROCEDURE User_Movement(IN p_Username VARCHAR(20), IN p_TileID INT)
 BEGIN
+    DECLARE userExists INT;
+    
+    -- Define an exit handler for SQL exceptions
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
+        -- Rollback the transaction in case of an error
         ROLLBACK;
         SELECT 'Error occurred, transaction rolled back' AS Message;
     END;
+
+    -- Start the transaction
     START TRANSACTION;
 
-    UPDATE tblGame
-    INNER JOIN tblUser ON tblGame.userID = tblUser.userID
-    SET tblGame.tileID = p_TileID
-    WHERE tblUser.username = p_Username;
-    COMMIT;
-    
-    SELECT 'Moved successfully' AS Message;
+    -- Check if the user exists
+    SELECT COUNT(*) INTO userExists
+    FROM tblUser
+    WHERE username = p_Username;
+
+    -- If user exists, then update the tileID
+    IF userExists > 0 THEN
+        UPDATE tblGame
+        INNER JOIN tblUser ON tblGame.userID = tblUser.userID
+        SET tblGame.tileID = p_TileID
+        WHERE tblUser.username = p_Username;
+
+        -- Commit the transaction
+        COMMIT;
+
+        SELECT 'Moved successfully' AS Message;
+    ELSE
+        -- User does not exist
+        ROLLBACK;
+
+        SELECT 'User does not exist' AS Message;
+    END IF;
 END //
 DELIMITER ;
-
-
 
 
 -- Chat Procedure
@@ -606,48 +612,66 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Chat_Message;
 
 DELIMITER //
-CREATE PROCEDURE Chat_Message(In pUsername VARCHAR(20), In pMessage VARCHAR(100))
+CREATE PROCEDURE Chat_Message(IN pUsername VARCHAR(20), IN pMessage VARCHAR(100))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         SELECT 'Error occurred, transaction rolled back' AS Message;
     END;
-
     START TRANSACTION;
-    INSERT INTO chat(username, message)
-    VALUES (pUsername, pMessage);
-    COMMIT;
-    
-    SELECT * FROM chat;
+
+    -- Check if the message is not empty
+    IF TRIM(pMessage) <> '' THEN
+        INSERT INTO chat(username, message)
+        VALUES (pUsername, pMessage);
+        COMMIT;
+        -- Select all messages from chat
+        SELECT * FROM chat;
+    ELSE
+        ROLLBACK;
+
+        SELECT 'Message cannot be empty' AS Message;
+    END IF;
 END //
 DELIMITER ;
 
--- Game End Procedure
 
-DROP PROCEDURE IF EXISTS Game_End;
+-- Game End Procedure
 
 DELIMITER //
 CREATE PROCEDURE Game_End(IN pGameID INT)
 BEGIN
+    DECLARE gameExists INT;
+    
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         SELECT 'Error occurred, transaction rolled back' AS Message;
     END;
+
     START TRANSACTION;
 
-    UPDATE tblGame
-    SET status = 'ended',
-        end_time = NOW()
+    -- Check if the game exists
+    SELECT COUNT(*) INTO gameExists
+    FROM tblGame
     WHERE gameID = pGameID;
 
-    COMMIT;
+    IF gameExists > 0 THEN
+        -- Game exists, mark as ended
+        UPDATE tblGame
+        SET status = 'ended',
+            end_time = NOW()
+        WHERE gameID = pGameID;
+        COMMIT;      
+        SELECT 'Game marked as ended' AS Message;
+    ELSE
+        ROLLBACK;       
+        SELECT 'Game does not exist' AS Message;
+    END IF;
 
-    SELECT 'Game marked as ended' AS Message;
 END //
 DELIMITER ;
-
 
 -- Admin Edit User Procedure
 
@@ -656,6 +680,8 @@ DROP PROCEDURE IF EXISTS Admin_Edit_User;
 DELIMITER //
 CREATE PROCEDURE Admin_Edit_User(IN pUsername VARCHAR(20), IN pPassword VARCHAR(30), IN pEmail VARCHAR(50), IN pIsLocked BIT, IN pIsAdmin BIT)
 BEGIN
+    DECLARE userExists INT;
+    
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -664,19 +690,26 @@ BEGIN
 
     START TRANSACTION;
 
-    IF EXISTS (SELECT email FROM tblUser WHERE email = pEmail) THEN
+    -- Check if the user with the given email exists
+    SELECT COUNT(*) INTO userExists
+    FROM tblUser
+    WHERE email = pEmail;
+
+    IF userExists > 0 THEN
+        -- User exists, update user
         UPDATE tblUser
         SET username = pUsername, password = pPassword, email = pEmail, isLocked = pIsLocked, isAdmin = pIsAdmin
         WHERE email = pEmail;
         
+        -- Commit the transaction
         COMMIT;
-
+        
         SELECT 'User Updated' AS Message;
     ELSE
-        COMMIT;
-
+        ROLLBACK;       
         SELECT 'Email does not exist' AS Message;
     END IF;
+
 END //
 DELIMITER ;
 
@@ -686,8 +719,11 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS Admin_New_User;
 
 DELIMITER //
-CREATE PROCEDURE Admin_New_User(In pUsername VARCHAR(20), In pPassword VARCHAR(30), In pEmail varchar(50), OUT pMessage VARCHAR(255))
+CREATE PROCEDURE Admin_New_User(In pUsername VARCHAR(20), In pPassword VARCHAR(30), In pEmail VARCHAR(50), OUT pMessage VARCHAR(255))
 BEGIN
+    DECLARE usernameExists INT;
+    DECLARE emailExists INT;
+    
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -696,23 +732,39 @@ BEGIN
 
     START TRANSACTION;
 
-    IF EXISTS (SELECT username FROM tblUser WHERE username = pUsername) THEN
+    -- Check if the username already exists
+    SELECT COUNT(*) INTO usernameExists
+    FROM tblUser
+    WHERE username = pUsername;
+
+    -- Check if the email already exists
+    SELECT COUNT(*) INTO emailExists
+    FROM tblUser
+    WHERE email = pEmail;
+
+    IF usernameExists > 0 THEN
+        -- Username already exists
         SET pMessage = 'Username already exists';
-        COMMIT;
-    ELSEIF EXISTS (SELECT email FROM tblUser WHERE email = pEmail) THEN
+        ROLLBACK;
+    ELSEIF emailExists > 0 THEN
+        -- Email already exists
         SET pMessage = 'Email already exists';
-        COMMIT;
+        ROLLBACK;
     ELSE
+        -- Insert the new user
         INSERT INTO tblUser (username, password, email, isAdmin, isLocked, numLoginAttempts, isOnline, score)
         VALUES (pUsername, pPassword, pEmail, false, 0, 0, 0, 0);
+        
+        -- Insert into tblInventory
         SET @lastUserID = LAST_INSERT_ID();
         INSERT INTO tblInventory (userID) VALUES (@lastUserID);      
-        SET pMessage = 'User added successfully';
-       
         COMMIT;
+        SET pMessage = 'User added successfully';
     END IF;
+
 END //
 DELIMITER ;
+
 
 
 
@@ -723,26 +775,33 @@ DROP PROCEDURE IF EXISTS Admin_Delete_User;
 DELIMITER //
 CREATE PROCEDURE Admin_Delete_User(IN pUserID INT)
 BEGIN
+    DECLARE rowsDeleted INT;
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         SELECT 'Error occurred, transaction rolled back' AS Message;
     END;
-
     START TRANSACTION;
 
+    -- Delete the user with the given userID
     DELETE FROM tblUser
     WHERE userID = pUserID;
 
+    SET rowsDeleted = ROW_COUNT();
+
     COMMIT;
 
-    IF ROW_COUNT() > 0 THEN
-        SELECT 'User Deleted' AS message;
+    -- Check if any rows were deleted
+    IF rowsDeleted > 0 THEN
+        SELECT 'User Deleted' AS Message;
     ELSE
-        SELECT 'User not found' AS message;
+        SELECT 'User not found' AS Message;
     END IF;
+
 END //
 DELIMITER ;
+
 
 
 
@@ -777,12 +836,13 @@ END //
 DELIMITER ;
 
 
+
 -- Admin End Game Procedure
 
 DROP PROCEDURE IF EXISTS Admin_End_Game;
 
 DELIMITER //
-CREATE PROCEDURE Admin_End_Game(In pGameID INT(10), In adminID INT(10))
+CREATE PROCEDURE Admin_End_Game(IN pGameID INT, IN adminID INT)
 BEGIN
     DECLARE isAdmin BOOLEAN;
 
@@ -794,24 +854,33 @@ BEGIN
 
     START TRANSACTION;
 
+    -- Check if the user is an admin
     SELECT isAdmin INTO isAdmin
     FROM tblUser
     WHERE userID = adminID;
 
+    -- If the user is an admin
     IF isAdmin = 1 THEN
+        -- Delete the game
         DELETE FROM game
         WHERE gameID = pGameID;
 
-        COMMIT;
-
-        SELECT CONCAT(pGameID, ' deleted') AS message;
+        -- Check if the deletion was successful
+        IF ROW_COUNT() > 0 THEN
+            COMMIT;
+            SELECT CONCAT('Game with ID ', pGameID, ' deleted successfully') AS Message;
+        ELSE
+            ROLLBACK;
+            SELECT CONCAT('Failed to delete game with ID ', pGameID) AS Message;
+        END IF;
     ELSE
-        COMMIT;
-
-        SELECT 'User is not an admin' AS message;
+        ROLLBACK;
+        SELECT 'User is not an admin' AS Message;
     END IF;
+
 END //
 DELIMITER ;
+
 
 
 -- Admin Get User Data
@@ -821,15 +890,102 @@ DROP PROCEDURE IF EXISTS Get_User_Data;
 DELIMITER //
 CREATE PROCEDURE Get_User_Data(IN pUserID INT)
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error occurred, transaction rolled back' AS Message;
+    END;
 
     SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
     START TRANSACTION;
 
+    -- Get user data
     SELECT username, password, email
     FROM tblUser
     WHERE userID = pUserID;
 
     COMMIT;
+
 END //
 DELIMITER ;
+
+-- Tests
+
+-- Successful login
+CALL Log_In('z', '');
+
+-- Unsuccessful login. Test 5 times to be locked out
+CALL Log_In('z', '1');
+
+-- New user success
+CALL New_User('John', 'test1234', 'John@test');
+
+-- User already exists
+CALL New_User('John', 'test1234', 'test@test');
+
+-- Log out success
+CALL Log_Out('z');
+
+-- Logging out with a bad username
+CALL Log_Out('a');
+
+-- get list of active users
+CALL Active_User_List();
+
+-- New game with valid user
+CALL Create_Game('z', @newGameID);
+
+-- Get latest gameid
+SELECT @newGameID AS GameID;
+
+-- Get all games
+CALL Game_List();
+
+-- Join a game that exists and user is not in
+CALL Join_Game(1, 2); 
+
+-- Same user trying to join a game that they are already in
+CALL Join_Game(1, 1);
+
+-- Joining a game that does not exist
+CALL Join_Game(10, 1);
+
+-- moving with valid user
+CALL User_Movement('z', 10); 
+
+-- invalid user tries to move
+CALL User_Movement('a', 10);
+
+-- User sends an empty message
+CALL Chat_Message('z', '');
+
+-- End a valid game
+CALL Game_End(1);
+
+-- Attempt to end a game that does not exist
+CALL Game_End(10);
+
+-- Updating a user with an existing email
+CALL Admin_Edit_User('b', '1', 'z', 0, 1); 
+
+-- Updating a email that does not existing
+CALL Admin_Edit_User('a', 'test', 'test@', 0, 1); 
+
+-- delete user name delete
+call Delete_User("delete") 
+
+-- Delete with non admin account
+CALL Admin_End_Game(1, 3);
+
+-- Deletes with an admin account
+CALL Admin_End_Game(1, 1);
+
+-- get data of existing user
+CALL Get_User_Data(1);
+
+-- Get data of non existing user
+CALL Get_User_Data(10);
+
+
 
