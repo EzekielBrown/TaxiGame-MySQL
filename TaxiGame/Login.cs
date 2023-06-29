@@ -3,7 +3,7 @@ namespace TaxiGame
     public partial class Login : Form
     {
         private Register _register;
-        private DataAccess dataAccess;
+        private DALogin daLogin;
         private Home _home;
         private bool isAdmin;
 
@@ -11,7 +11,7 @@ namespace TaxiGame
         {
             InitializeComponent();
             _register = new Register();
-            dataAccess = new DataAccess();
+            daLogin = new DALogin();
         }
 
         private void buttonLogin_Click(object sender, EventArgs e)
@@ -19,7 +19,7 @@ namespace TaxiGame
             string username = textUsername.Text;
             string password = textPassword.Text;
 
-            string result = dataAccess.Log_In(username, password, out isAdmin);
+            string result = daLogin.Log_In(username, password, out isAdmin);
 
             if (result == "Login Successful")
             {

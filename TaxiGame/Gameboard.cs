@@ -1,11 +1,9 @@
-﻿using static TaxiGame.DataAccess;
-
-namespace TaxiGame
+﻿namespace TaxiGame
 {
     public partial class Gameboard : Form
     {
         private Home _home;
-        private DataAccess dataAccess;
+        private DAGameboard daGameboard;
         private int gameID;
         private string username;
 
@@ -13,12 +11,12 @@ namespace TaxiGame
         {
             InitializeComponent();
             _home = home;
-            dataAccess = new DataAccess();
+            daGameboard = new DAGameboard();
             this.gameID = gameID;
             this.username = username;
             CreateGameboard();
 
-            dataAccess.SpawnRandomPassenger();
+            daGameboard.SpawnRandomPassenger();
 
             this.KeyDown += Gameboard_KeyDown;
             this.KeyPreview = true;
@@ -33,15 +31,15 @@ namespace TaxiGame
 
         public void CreateGameboard()
         {
-            int userScore = dataAccess.GetUserScore(username);
+            int userScore = daGameboard.GetUserScore(username);
             score.Text = $"SCORE: {userScore}";
 
-            int numberOfPassengers = dataAccess.GetUserPassengers(username);
+            int numberOfPassengers = daGameboard.GetUserPassengers(username);
             passengers.Text = $"CURRENT PASSENGERS: {numberOfPassengers} / 3";
 
 
-            List<Tile> tiles = dataAccess.GetTiles();
-            int playerCurrentTileID = dataAccess.GetPlayerCurrentTileID(username);
+            List<Tile> tiles = daGameboard.GetTiles();
+            int playerCurrentTileID = daGameboard.GetPlayerCurrentTileID(username);
 
             Dictionary<int, Panel> tilePanels = new Dictionary<int, Panel>();
 
@@ -103,7 +101,7 @@ namespace TaxiGame
 
                 if (clickedTileID == 16) // checks if the tile is clickable
                 {
-                    string result = dataAccess.User_Movement(username, clickedTileID);
+                    string result = daGameboard.User_Movement(username, clickedTileID);
 
                     panelGame.Controls.Clear();
                     CreateGameboard();
@@ -113,10 +111,10 @@ namespace TaxiGame
 
         private void MovePlayer(int deltaX, int deltaY)
         {
-            int playerCurrentTileID = dataAccess.GetPlayerCurrentTileID(username);
-            List<Tile> tiles = dataAccess.GetTiles();
+            int playerCurrentTileID = daGameboard.GetPlayerCurrentTileID(username);
+            List<Tile> tiles = daGameboard.GetTiles();
             Tile currentTile = tiles.FirstOrDefault(t => t.TileID == playerCurrentTileID);
-            bool hasPassenger = dataAccess.HasPassengerInInventory(username);
+            bool hasPassenger = daGameboard.HasPassengerInInventory(username);
 
             if (currentTile == null) return;
 
@@ -125,7 +123,7 @@ namespace TaxiGame
             if (newTile != null && (newTile.ItemID == 4 || newTile.ItemID == 5))
             {
                 MessageBox.Show("You have crashed. Game over", "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                dataAccess.EndGame(gameID);
+                daGameboard.EndGame(gameID);
                 this.Hide();
                 _home.Show();
                 return;
@@ -134,21 +132,21 @@ namespace TaxiGame
             if (newTile != null && newTile.ItemID == 1)
             {
                 hasPassenger = true;
-                dataAccess.SetTileItemID(newTile.TileID, 3);
+                daGameboard.SetTileItemID(newTile.TileID, 3);
             }
 
             int newTileID = newTile?.TileID ?? playerCurrentTileID;
 
             if (newTileID != playerCurrentTileID)
             {
-                string result = dataAccess.User_Movement(username, newTileID);
+                string result = daGameboard.User_Movement(username, newTileID);
 
                 if (hasPassenger && newTileID == 19) // if player are on drop off tile
                 {
-                    int numberOfPassengers = dataAccess.GetUserPassengers(username); // get the number of passengers
-                    dataAccess.IncrementPlayerScore(username, 100 * numberOfPassengers); // increase score by 100 per passenger
-                    dataAccess.SpawnRandomPassenger(); // spawns another passenger
-                    dataAccess.ResetPassengerCount(username); // resets passengers
+                    int numberOfPassengers = daGameboard.GetUserPassengers(username); // get the number of passengers
+                    daGameboard.IncrementPlayerScore(username, 100 * numberOfPassengers); // increase score by 100 per passenger
+                    daGameboard.SpawnRandomPassenger(); // spawns another passenger
+                    daGameboard.ResetPassengerCount(username); // resets passengers
                 }
                 panelGame.Controls.Clear();
                 CreateGameboard();
@@ -156,10 +154,10 @@ namespace TaxiGame
 
             if (newTile != null && newTile.ItemID == 1)
             {
-                bool passengerAdded = dataAccess.AddPassengerToInventory(username);
+                bool passengerAdded = daGameboard.AddPassengerToInventory(username);
                 if (passengerAdded)
                 {
-                    dataAccess.SetTileItemID(newTile.TileID, 3);
+                    daGameboard.SetTileItemID(newTile.TileID, 3);
                 }
                 else
                 {

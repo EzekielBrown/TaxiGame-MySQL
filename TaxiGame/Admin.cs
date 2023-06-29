@@ -4,12 +4,12 @@ namespace TaxiGame
 {
     public partial class Admin : Form
     {
-        private DataAccess dataAccess;
+        private DAAdmin daAdmin;
         private Home homeForm;
         public Admin(Home homeForm)
         {
             InitializeComponent();
-            dataAccess = new DataAccess();
+            daAdmin = new DAAdmin();
             this.homeForm = homeForm;
         }
 
@@ -18,7 +18,7 @@ namespace TaxiGame
             int userID;
             if (int.TryParse(textBoxID.Text, out userID))
             {
-                PlayerInDB user = dataAccess.GetUserData(userID);
+                PlayerInDB user = daAdmin.GetUserData(userID);
 
                 if (user != null)
                 {
@@ -47,7 +47,7 @@ namespace TaxiGame
             bool isLocked = checkBoxIsLocked.Checked;
             bool isAdmin = checkBoxIsAdmin.Checked;
 
-            string result = dataAccess.Admin_Edit_User(username, password, email, isLocked, isAdmin);
+            string result = daAdmin.Admin_Edit_User(username, password, email, isLocked, isAdmin);
 
 
             if (result == "User Updated")
@@ -65,7 +65,7 @@ namespace TaxiGame
             int userID;
             if (int.TryParse(textBoxID.Text, out userID))
             {
-                string result = dataAccess.Admin_Delete_User(userID);
+                string result = daAdmin.Admin_Delete_User(userID);
 
                 if (result == "User Deleted")
                 {
@@ -97,7 +97,7 @@ namespace TaxiGame
             string password = textBoxPassword.Text;
             string email = textBoxEmail.Text;
 
-            string result = dataAccess.Admin_New_User(username, password, email);
+            string result = daAdmin.Admin_New_User(username, password, email);
 
             MessageBox.Show(result);
         }

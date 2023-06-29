@@ -2,12 +2,12 @@
 {
     public partial class Register : Form
     {
-        private DataAccess dataAccess;
+        private DARegister daRegister;
         private Login _login;
         public Register()
         {
             InitializeComponent();
-            dataAccess = new DataAccess();
+            daRegister = new DARegister();
         }
 
         private void buttonCreate_Click(object sender, EventArgs e)
@@ -47,7 +47,7 @@
                 return;
             }
 
-            string result = dataAccess.New_User(username, password, email);
+            string result = daRegister.New_User(username, password, email);
 
             if (result == "User Exists") // checks if user exists
             {

@@ -4,7 +4,7 @@ namespace TaxiGame
 {
     public partial class Home : Form
     {
-        private DataAccess dataAccess;
+        private DAHome daHome;
         private bool isAdmin;
         private Admin _admin;
         private Gameboard _gameboard;
@@ -15,7 +15,7 @@ namespace TaxiGame
         public Home(string username)
         {
             InitializeComponent();
-            dataAccess = new DataAccess();
+            daHome = new DAHome();
             _admin = new Admin(this);
             currentUsername = username;
 
@@ -26,7 +26,7 @@ namespace TaxiGame
 
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
-            int newGameID = dataAccess.Create_Game(currentUsername);
+            int newGameID = daHome.Create_Game(currentUsername);
 
             if (newGameID > 0)
             {
@@ -57,7 +57,7 @@ namespace TaxiGame
 
         private void buttonLogOut_Click(object sender, EventArgs e)
         {
-            string result = dataAccess.Log_Out(currentUsername);
+            string result = daHome.Log_Out(currentUsername);
 
             if (result == "Logout Successful")
             {
@@ -88,7 +88,7 @@ namespace TaxiGame
         {
             listBoxPlayers.Items.Clear();
 
-            List<PlayerInDB> activePlayers = dataAccess.Active_User_List();
+            List<PlayerInDB> activePlayers = daHome.Active_User_List();
 
             foreach (PlayerInDB player in activePlayers)
             {
@@ -98,7 +98,7 @@ namespace TaxiGame
 
         private void GameList()
         {
-            List<GameInDB> gameList = dataAccess.Game_List();
+            List<GameInDB> gameList = daHome.Game_List();
 
             listBoxGames.Items.Clear();
             foreach (GameInDB game in gameList)
@@ -118,7 +118,7 @@ namespace TaxiGame
                 if (int.TryParse(selectedGame.Split('-')[0].Trim(), out gameID))
                 {
                     int userID = 1; // remember to fix
-                    string result = dataAccess.Join_Game(gameID, userID);
+                    string result = daHome.Join_Game(gameID, userID);
 
                     if (result == "Game Joined")
                     {
@@ -154,7 +154,7 @@ namespace TaxiGame
                     int gameID;
                     if (int.TryParse(selectedGame.Split('-')[0].Trim(), out gameID))
                     {
-                        bool result = dataAccess.KillGame(gameID);
+                        bool result = daHome.KillGame(gameID);
 
                         if (result)
                         {
