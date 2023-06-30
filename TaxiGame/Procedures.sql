@@ -1,3 +1,5 @@
+-- I would suggest removing the tests at the very bottom before running the script
+
 DROP DATABASE IF EXISTS taxi_game;
 CREATE DATABASE taxi_game;
 USE taxi_game;
@@ -766,8 +768,6 @@ END //
 DELIMITER ;
 
 
-
-
 -- Admin Delete User Procedure
 
 DROP PROCEDURE IF EXISTS Admin_Delete_User;
@@ -1130,7 +1130,8 @@ CALL User_Movement('a', 10);
 CALL Chat_Message('z', '');
 
 -- End a valid game
-CALL Game_End(1);
+CALL KillGame(1);
+select * from tblgame;
 
 -- Attempt to end a game that does not exist
 CALL Game_End(10);
@@ -1161,6 +1162,10 @@ SELECT username, score FROM tblUser WHERE username = 'z';
 CALL IncrementPlayerScore('z', 100);
 SELECT username, score FROM tblUser WHERE username = 'z';
 
+-- Admin create new user
+CALL Admin_New_User('test', 'test', 'test@t', @message);
+SELECT @message AS Test;
+SELECT * FROM tbluser;
 
 
 
