@@ -173,19 +173,17 @@ namespace TaxiGame
         {
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
+                using (var connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
+                    string procedureName = "KillGame";
+
+                    MySqlCommand command = new MySqlCommand(procedureName, connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@pGameID", gameID);
+
                     connection.Open();
-
-                    string query = "DELETE FROM tblGame WHERE gameID = @gameID";
-
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@gameID", gameID);
-
-                        int rowsAffected = command.ExecuteNonQuery();
-                        return rowsAffected > 0;
-                    }
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return rowsAffected > 0;
                 }
             }
             catch (Exception ex)
@@ -194,6 +192,7 @@ namespace TaxiGame
                 return false;
             }
         }
+
     }
 }
 

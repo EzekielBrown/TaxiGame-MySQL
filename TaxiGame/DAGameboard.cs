@@ -182,50 +182,45 @@ namespace TaxiGame
         {
             try
             {
-                DataAccess.MySqlConnection.Open();
-
-                string query = @"
-            SELECT passengerCount 
-            FROM tblInventory 
-            INNER JOIN tblUser ON tblInventory.userID = tblUser.userID 
-            WHERE tblUser.username = @username";
-                using (var command = new MySqlCommand(query, DataAccess.MySqlConnection))
+                using (var connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    command.Parameters.AddWithValue("@username", username);
-                    object result = command.ExecuteScalar();
-                    if (result != null)
-                    {
-                        return Convert.ToInt32(result);
-                    }
+                    string procedureName = "GetUserPassengers";
+
+                    MySqlCommand command = new MySqlCommand(procedureName, connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@pUsername", username);
+                    command.Parameters.Add("@pPassengerCount", MySqlDbType.Int32).Direction = ParameterDirection.Output;
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+
+                    int passengerCount = Convert.ToInt32(command.Parameters["@pPassengerCount"].Value);
+                    return passengerCount;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+                return 0;
             }
-            finally
-            {
-                DataAccess.MySqlConnection.Close();
-            }
-            return 0;
         }
+
 
         public void SetTileItemID(int tileID, int itemID)
         {
             try
             {
-                string query = "UPDATE tblTile SET itemID = @ItemID WHERE tileID = @TileID";
-
-                using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
+                using (var connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@TileID", tileID);
-                        command.Parameters.AddWithValue("@ItemID", itemID);
+                    string procedureName = "SetTileItemID";
 
-                        connection.Open();
-                        command.ExecuteNonQuery();
-                    }
+                    MySqlCommand command = new MySqlCommand(procedureName, connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@pTileID", tileID);
+                    command.Parameters.AddWithValue("@pItemID", itemID);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
@@ -233,20 +228,20 @@ namespace TaxiGame
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
+
 
 
         public void IncrementPlayerScore(string username, int amount)
         {
             try
             {
-                string query = "UPDATE tblUser SET score = score + @Amount WHERE username = @Username";
-
                 using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    using (MySqlCommand command = new MySqlCommand("IncrementPlayerScore", connection))
                     {
-                        command.Parameters.AddWithValue("@Username", username);
-                        command.Parameters.AddWithValue("@Amount", amount);
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@pUsername", username);
+                        command.Parameters.AddWithValue("@pAmount", amount);
 
                         connection.Open();
                         command.ExecuteNonQuery();
@@ -258,18 +253,17 @@ namespace TaxiGame
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
-
 
         public void SpawnRandomPassenger()
         {
             try
             {
-                string query = "UPDATE tblTile SET itemID = 1 WHERE itemID = 3 ORDER BY RAND() LIMIT 1";
-
                 using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    using (MySqlCommand command = new MySqlCommand("SpawnRandomPassenger", connection))
                     {
+                        command.CommandType = CommandType.StoredProcedure;
+
                         connection.Open();
                         command.ExecuteNonQuery();
                     }
@@ -280,16 +274,18 @@ namespace TaxiGame
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
+
         public bool AddPassengerToInventory(string username)
         {
             try
             {
                 using (var connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    string query = "UPDATE tblInventory SET passengerCount = passengerCount + 1 WHERE userID = (SELECT userID FROM tblUser WHERE username = @username) AND passengerCount < 3";
+                    string procedureName = "AddPassengerToInventory";
 
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@username", username);
+                    MySqlCommand command = new MySqlCommand(procedureName, connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@pUsername", username);
 
                     connection.Open();
 
@@ -304,25 +300,21 @@ namespace TaxiGame
                 return false;
             }
         }
+
         public void ResetPassengerCount(string username)
         {
             try
             {
-                string query = @"
-            UPDATE tblInventory
-            SET passengerCount = 0
-            WHERE userID = (SELECT userID FROM tblUser WHERE username = @Username)
-        ";
-
-                using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
+                using (var connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Username", username);
+                    string procedureName = "ResetPassengerCount";
 
-                        connection.Open();
-                        command.ExecuteNonQuery();
-                    }
+                    MySqlCommand command = new MySqlCommand(procedureName, connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@pUsername", username);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
@@ -331,32 +323,27 @@ namespace TaxiGame
             }
         }
 
+
         public bool HasPassengerInInventory(string username)
         {
             try
             {
-                string query = @"
-            SELECT passengerCount
-            FROM tblInventory
-            WHERE userID = (SELECT userID FROM tblUser WHERE username = @Username)
-        ";
-
                 using (MySqlConnection connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    using (MySqlCommand command = new MySqlCommand("HasPassengerInInventory", connection))
                     {
-                        command.Parameters.AddWithValue("@Username", username);
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@pUsername", username);
+
+                        MySqlParameter hasPassengerParam = new MySqlParameter("@pHasPassenger", MySqlDbType.Int32);
+                        hasPassengerParam.Direction = ParameterDirection.Output;
+                        command.Parameters.Add(hasPassengerParam);
 
                         connection.Open();
+                        command.ExecuteNonQuery();
 
-                        using (MySqlDataReader reader = command.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                int passengerCount = reader.GetInt32("passengerCount");
-                                return passengerCount > 0;
-                            }
-                        }
+                        bool hasPassenger = Convert.ToBoolean(hasPassengerParam.Value);
+                        return hasPassenger;
                     }
                 }
             }
@@ -367,5 +354,6 @@ namespace TaxiGame
 
             return false;
         }
+
     }
 }

@@ -11,113 +11,113 @@ DELIMITER //
 CREATE PROCEDURE Create_Taxi_Game()
 BEGIN
 
-DROP TABLE IF EXISTS tblUser;
-DROP TABLE IF EXISTS tblTile;
-DROP TABLE IF EXISTS tblGame;
-DROP TABLE IF EXISTS tblInventory;
-DROP TABLE IF EXISTS tblItem;
-drop table if exists tblUserGame;
+	DROP TABLE IF EXISTS tblUser;
+	DROP TABLE IF EXISTS tblTile;
+	DROP TABLE IF EXISTS tblGame;
+	DROP TABLE IF EXISTS tblInventory;
+	DROP TABLE IF EXISTS tblItem;
+	drop table if exists tblUserGame;
 
 
 -- Create Tables
 
-CREATE TABLE tblUser (
-    userID int(10) primary key not null AUTO_INCREMENT,
-    username varchar(20) not null unique,
-    `password` varchar(30) not null,
-    email varchar(50) not null unique,
-    isAdmin boolean default false,
-    isLocked bit default 0,
-    numLoginAttempts int(1) default 0,
-    lockedUntil datetime,
-    isOnline bit default 0,
-    score int(10) default 0
-);
-
-
-CREATE TABLE tblItem
-(
-    itemID int(10) primary key not null auto_increment,
-    name varchar(30) null,
-    description varchar(255) null,
-    isNPC bit not null,
-    value int(10) null
-);
-
-CREATE TABLE tblTile
-(
-    tileID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `column` INT NOT NULL,
-    `row` INT NOT NULL,
-    homeTile TINYINT(1),
-    DropOffTile TINYINT(1),
-    itemID INT
-);
-
-
-CREATE TABLE tblGame
-(
-    gameID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    tileID INT,
-    userID INT
-);
-
-
-
-CREATE TABLE tblInventory
-(
-    inventoryID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    userID INT NOT NULL,
-    itemID INT,
-    passengerCount INT NOT NULL DEFAULT 0,
-    CONSTRAINT fk_userID FOREIGN KEY (userID) REFERENCES tblUser(userID) ON DELETE CASCADE,
-    CONSTRAINT chk_passengerCount CHECK (passengerCount >= 0 AND passengerCount <= 3)
-);
-
-
-
-CREATE TABLE tblChat
-(
-    chatID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    userID INT,
-    message VARCHAR(255)
-);
-
-CREATE TABLE tblUserGame (
-    userID INT,
-    gameID INT,
-    PRIMARY KEY (userID, gameID),
-    FOREIGN KEY (userID) REFERENCES tblUser(userID),
-    FOREIGN KEY (gameID) REFERENCES tblGame(gameID) ON DELETE CASCADE
-);
-
-
-
--- Foreign Keys
-
-alter table tblTile
-add constraint fk_item_tile
-FOREIGN KEY (itemID) REFERENCES tblItem(itemID);
-
-alter table tblGame
-add constraint fk_user_game
-FOREIGN KEY (userID) REFERENCES tblUser(userID);
-
-alter table tblGame
-add constraint fk_tile_game
-FOREIGN KEY (tileID) REFERENCES tblTile(tileID);
-
-alter table tblInventory
-add constraint fk_item_inventory
-FOREIGN KEY (itemID) REFERENCES tblItem(itemID);
-
-alter table tblInventory
-add constraint fk_user_inventory
-FOREIGN KEY (userID) REFERENCES tblUser(userID);
-
-alter table tblChat
-add constraint fk_user_chat
-FOREIGN KEY (userID) REFERENCES tblUser(userID);
+	CREATE TABLE tblUser (
+	    userID int(10) primary key not null AUTO_INCREMENT,
+	    username varchar(20) not null unique,
+	    `password` varchar(30) not null,
+	    email varchar(50) not null unique,
+	    isAdmin boolean default false,
+	    isLocked bit default 0,
+	    numLoginAttempts int(1) default 0,
+	    lockedUntil datetime,
+	    isOnline bit default 0,
+	    score int(10) default 0
+	);
+	
+	
+	CREATE TABLE tblItem
+	(
+	    itemID int(10) primary key not null auto_increment,
+	    name varchar(30) null,
+	    description varchar(255) null,
+	    isNPC bit not null,
+	    value int(10) null
+	);
+	
+	CREATE TABLE tblTile
+	(
+	    tileID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    `column` INT NOT NULL,
+	    `row` INT NOT NULL,
+	    homeTile TINYINT(1),
+	    DropOffTile TINYINT(1),
+	    itemID INT
+	);
+	
+	
+	CREATE TABLE tblGame
+	(
+	    gameID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    tileID INT,
+	    userID INT
+	);
+	
+	
+	
+	CREATE TABLE tblInventory
+	(
+	    inventoryID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    userID INT NOT NULL,
+	    itemID INT,
+	    passengerCount INT NOT NULL DEFAULT 0,
+	    CONSTRAINT fk_userID FOREIGN KEY (userID) REFERENCES tblUser(userID) ON DELETE CASCADE,
+	    CONSTRAINT chk_passengerCount CHECK (passengerCount >= 0 AND passengerCount <= 3)
+	);
+	
+	
+	
+	CREATE TABLE tblChat
+	(
+	    chatID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    userID INT,
+	    message VARCHAR(255)
+	);
+	
+	CREATE TABLE tblUserGame (
+	    userID INT,
+	    gameID INT,
+	    PRIMARY KEY (userID, gameID),
+	    FOREIGN KEY (userID) REFERENCES tblUser(userID),
+	    FOREIGN KEY (gameID) REFERENCES tblGame(gameID) ON DELETE CASCADE
+	);
+	
+	
+	
+	-- Foreign Keys
+	
+	alter table tblTile
+	add constraint fk_item_tile
+	FOREIGN KEY (itemID) REFERENCES tblItem(itemID);
+	
+	alter table tblGame
+	add constraint fk_user_game
+	FOREIGN KEY (userID) REFERENCES tblUser(userID);
+	
+	alter table tblGame
+	add constraint fk_tile_game
+	FOREIGN KEY (tileID) REFERENCES tblTile(tileID);
+	
+	alter table tblInventory
+	add constraint fk_item_inventory
+	FOREIGN KEY (itemID) REFERENCES tblItem(itemID);
+	
+	alter table tblInventory
+	add constraint fk_user_inventory
+	FOREIGN KEY (userID) REFERENCES tblUser(userID);
+	
+	alter table tblChat
+	add constraint fk_user_chat
+	FOREIGN KEY (userID) REFERENCES tblUser(userID);
 
 END //
 DELIMITER ;
@@ -910,6 +910,175 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Increment Player Score
+
+DELIMITER //
+CREATE PROCEDURE IncrementPlayerScore(IN pUsername VARCHAR(20), IN pAmount INT)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error occurred, transaction rolled back' AS Message;
+    END;
+    
+    START TRANSACTION;
+
+    -- Increment player score
+    UPDATE tblUser
+    SET score = score + pAmount
+    WHERE username = pUsername;
+
+    COMMIT;
+    
+END //
+DELIMITER ;
+
+-- Passengers in inventory
+
+DELIMITER //
+CREATE PROCEDURE HasPassengerInInventory(IN pUsername VARCHAR(20), OUT pHasPassenger BOOLEAN)
+BEGIN
+    DECLARE vUserID INT;
+    DECLARE vPassengerCount INT DEFAULT 0;
+
+    -- Get userID
+    SELECT userID INTO vUserID
+    FROM tblUser
+    WHERE username = pUsername;
+
+    -- Get passengerCount
+    SELECT passengerCount INTO vPassengerCount
+    FROM tblInventory
+    WHERE userID = vUserID;
+
+    -- Check if passengerCount is greater than 0
+    SET pHasPassenger = vPassengerCount > 0;
+
+END //
+DELIMITER ;
+
+-- Spawn random passengers
+
+DELIMITER //
+CREATE PROCEDURE SpawnRandomPassenger()
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error occurred, transaction rolled back' AS Message;
+    END;
+
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+    START TRANSACTION;
+
+    -- Update the tblTile
+    UPDATE tblTile SET itemID = 1 WHERE itemID = 3 ORDER BY RAND() LIMIT 1;
+
+    COMMIT;
+END //
+DELIMITER ;
+
+-- Add Passengers to the players inventory
+
+DELIMITER //
+CREATE PROCEDURE AddPassengerToInventory(IN pUsername VARCHAR(20))
+BEGIN
+    UPDATE tblInventory
+    SET passengerCount = passengerCount + 1
+    WHERE userID = (SELECT userID FROM tblUser WHERE username = pUsername) AND passengerCount < 3;
+END //
+DELIMITER ;
+
+-- Reset passenger count 
+
+DELIMITER //
+CREATE PROCEDURE ResetPassengerCount(IN pUsername VARCHAR(20))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+   		SELECT 'Error occurred, transaction rolled back' AS Message;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE tblInventory
+    SET passengerCount = 0
+    WHERE userID = (SELECT userID FROM tblUser WHERE username = pUsername);
+
+    COMMIT;
+END //
+DELIMITER ;
+
+
+
+-- Get Passenger count from users
+
+DELIMITER //
+CREATE PROCEDURE GetUserPassengers(IN pUsername VARCHAR(20), OUT pPassengerCount INT)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error occurred, transaction rolled back' AS Message;
+    END;
+
+    START TRANSACTION;
+
+    SELECT passengerCount 
+    INTO pPassengerCount
+    FROM tblInventory 
+    INNER JOIN tblUser ON tblInventory.userID = tblUser.userID 
+    WHERE tblUser.username = pUsername;
+
+    COMMIT;
+END //
+DELIMITER ;
+
+
+-- set tile item id
+
+DELIMITER //
+CREATE PROCEDURE SetTileItemID(IN pTileID INT, IN pItemID INT)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error occurred, transaction rolled back' AS Message;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE tblTile
+    SET itemID = pItemID
+    WHERE tileID = pTileID;
+
+    COMMIT;
+END //
+DELIMITER ;
+
+
+-- Kill game
+
+DELIMITER //
+CREATE PROCEDURE KillGame(IN pGameID INT)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error occurred, transaction rolled back' AS Message;
+    END;
+
+    START TRANSACTION;
+
+    DELETE FROM tblGame
+    WHERE gameID = pGameID;
+
+    COMMIT;
+END //
+DELIMITER ;
+
 -- Tests
 
 -- Successful login
@@ -921,7 +1090,7 @@ CALL Log_In('z', '1');
 -- New user success
 CALL New_User('John', 'test1234', 'John@test');
 
--- User already exists
+-- New user but User already exists, different email
 CALL New_User('John', 'test1234', 'test@test');
 
 -- Log out success
@@ -986,6 +1155,13 @@ CALL Get_User_Data(1);
 
 -- Get data of non existing user
 CALL Get_User_Data(10);
+
+-- Adding score to a user
+SELECT username, score FROM tblUser WHERE username = 'z';
+CALL IncrementPlayerScore('z', 100);
+SELECT username, score FROM tblUser WHERE username = 'z';
+
+
 
 
 
