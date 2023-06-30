@@ -128,9 +128,11 @@ namespace TaxiGame
             }
             catch (MySqlException ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
             return null;

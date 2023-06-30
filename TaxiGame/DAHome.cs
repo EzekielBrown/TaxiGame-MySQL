@@ -72,6 +72,7 @@ namespace TaxiGame
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
                 return -1;
             }
             finally
@@ -131,6 +132,7 @@ namespace TaxiGame
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
                 return new List<PlayerInDB>(); // return empty list
             }
         }
@@ -180,6 +182,7 @@ namespace TaxiGame
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
                 return false;
             }
         }
