@@ -10,33 +10,41 @@ namespace TaxiGame
         {
             List<Tile> tiles = new List<Tile>();
 
-            using (var connection = new MySqlConnection(DataAccess.ConnectionString))
+            try
             {
-                connection.Open();
-
-                var query = "SELECT `column`, `row`, homeTile, DropOffTile, tileID, itemID FROM tblTile";
-
-                var command = new MySqlCommand(query, connection);
-                var reader = command.ExecuteReader();
-
-                while (reader.Read())
+                using (var connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    int column = Convert.ToInt32(reader["column"]);
-                    int row = Convert.ToInt32(reader["row"]);
-                    bool isHomeTile = Convert.ToBoolean(reader["homeTile"]);
-                    bool isDropOffTile = Convert.ToBoolean(reader["DropOffTile"]);
-                    int tileID = Convert.ToInt32(reader["tileID"]);
-                    int itemID = Convert.ToInt32(reader["itemID"]);
+                    connection.Open();
 
-                    Tile tile = new Tile(tileID, column, row, isHomeTile, isDropOffTile, itemID);
-                    tiles.Add(tile);
+                    var query = "SELECT `column`, `row`, homeTile, DropOffTile, tileID, itemID FROM tblTile";
+
+                    var command = new MySqlCommand(query, connection);
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        int column = Convert.ToInt32(reader["column"]);
+                        int row = Convert.ToInt32(reader["row"]);
+                        bool isHomeTile = Convert.ToBoolean(reader["homeTile"]);
+                        bool isDropOffTile = Convert.ToBoolean(reader["DropOffTile"]);
+                        int tileID = Convert.ToInt32(reader["tileID"]);
+                        int itemID = Convert.ToInt32(reader["itemID"]);
+
+                        Tile tile = new Tile(tileID, column, row, isHomeTile, isDropOffTile, itemID);
+                        tiles.Add(tile);
+                    }
+
+                    reader.Close();
                 }
-
-                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
             return tiles;
         }
+
 
 
         public int GetPlayerCurrentTileID(string username)

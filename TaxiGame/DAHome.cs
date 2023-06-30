@@ -88,28 +88,36 @@ namespace TaxiGame
         {
             List<GameInDB> games = new List<GameInDB>();
 
-            using (var connection = new MySqlConnection(DataAccess.ConnectionString))
+            try
             {
-                connection.Open();
-
-                var query = "SELECT g.gameID, u.username FROM tblGame g INNER JOIN tblUser u ON g.userID = u.userID";
-                var command = new MySqlCommand(query, connection);
-                var reader = command.ExecuteReader();
-
-                while (reader.Read())
+                using (var connection = new MySqlConnection(DataAccess.ConnectionString))
                 {
-                    int gameID = Convert.ToInt32(reader["gameID"]);
-                    string username = reader["username"].ToString();
+                    connection.Open();
 
-                    GameInDB game = new GameInDB(gameID, username);
-                    games.Add(game);
+                    var query = "SELECT g.gameID, u.username FROM tblGame g INNER JOIN tblUser u ON g.userID = u.userID";
+                    var command = new MySqlCommand(query, connection);
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        int gameID = Convert.ToInt32(reader["gameID"]);
+                        string username = reader["username"].ToString();
+
+                        GameInDB game = new GameInDB(gameID, username);
+                        games.Add(game);
+                    }
+
+                    reader.Close();
                 }
-
-                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
             return games;
         }
+
 
         public List<PlayerInDB> Active_User_List()
         {
